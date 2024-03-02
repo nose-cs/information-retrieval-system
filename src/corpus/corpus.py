@@ -93,7 +93,7 @@ class Corpus(ABC):
             return 0
 
     def get_max_frequency(self, doc_id: int) -> Tuple[str, int]:
-        """Gets the term of the max frequency in a certain document"""
+        """Gets the term of the max frequency and its frequency in a certain document"""
         vector = self.doc2bow(doc_id)
         max_freq_id = max(vector.items(), key=lambda x: x[1])
         return self.index[max_freq_id[0]], max_freq_id[1]
