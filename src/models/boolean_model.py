@@ -1,4 +1,4 @@
-from models import IRModel
+from .model import IRModel
 
 class BooleanModel(IRModel):
     pass

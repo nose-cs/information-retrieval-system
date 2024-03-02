@@ -7,8 +7,8 @@ from typing import List, Dict, Tuple
 from gensim.corpora import Dictionary
 from pathlib import Path
 
-from document import Document
-from utils import remove_punctuation, to_lower, tokenize
+from .document import Document
+from src.utils import remove_punctuation, to_lower, tokenize
 
 
 class Corpus(ABC):

@@ -2,8 +2,7 @@
 from abc import ABC
 from typing import List, Tuple
 
-from corpus import Corpus
-from document import Document
+from src.corpus import Corpus, Document
 
 
 class IRModel(ABC):

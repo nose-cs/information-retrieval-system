@@ -1,9 +1,9 @@
 from typing import List, Tuple, Dict
 import math
 
-from models import IRModel
-from utils import tf, idf
-from corpus import Corpus
+from src.models import IRModel
+from src.utils import tf, idf
+from src.corpus import Corpus
 
 class VectorModel(IRModel):
     def __init__(self, corpus: Corpus):
