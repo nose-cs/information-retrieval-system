@@ -14,10 +14,11 @@ from utils import remove_punctuation, to_lower, tokenize
 class Corpus(ABC):
     def __init__(self, path: Path, stemming=False, corpus_type="", language="english"):
         self.corpus_type = corpus_type
+        self.language = language
         self.documents: List[Document] = []
-        self.stopwords = set(nltk.corpus.stopwords.words(language))
+        self.stopwords = set(nltk.corpus.stopwords.words(self.language))
         self.index: Dictionary = None
-        self.stemmer = nltk.SnowballStemmer(language) if stemming else None
+        self.stemmer = nltk.SnowballStemmer(self.language) if stemming else None
         try:
             self.load_indexed_corpus()
         except FileNotFoundError or FileExistsError:

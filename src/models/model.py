@@ -1,13 +1,15 @@
 """Module to implement the base method of the IR model"""
+from abc import ABC
 from typing import List, Tuple
 
 from corpus import Corpus
 from document import Document
 
 
-class IRModel:
-    def __init__(self, doc_analyzer: Corpus):
-        self.doc_analyzer = doc_analyzer
+class IRModel(ABC):
+    def __init__(self, corpus: Corpus):
+        self.corpus = corpus
+
 
     def ranking_function(self, query: List[Tuple[int, int]]) -> List[Tuple[int, float]]:
         """
@@ -25,4 +27,4 @@ class IRModel:
         Uses the ranking produced by the ranking function
         and returns the documents with the highest ranking.
         """
-        return [self.doc_analyzer.get_document(doc_id) for doc_id, _ in ranking]
+        return [self.corpus.id2doc(doc_id) for doc_id, _ in ranking]
