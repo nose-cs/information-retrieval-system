@@ -1,47 +1,37 @@
 """Corpus module to implement reading and processing of the documents."""
+import pickle
 
-import os
 import nltk
-from typing import List
+from abc import ABC, abstractmethod
+from typing import List, Dict
 from gensim.corpora import Dictionary
+from pathlib import Path
 
 from document import Document
 from utils import remove_punctuation, to_lower, tokenize
 
 
-class Corpus:
-    def __init__(self, data_dir, language: str = "english", stemming=False):
-        self.data_dir = data_dir
+class Corpus(ABC):
+    def __init__(self, path: Path, stemming=False, corpus_type="", language="english"):
+        self.corpus_type = corpus_type
         self.documents: List[Document] = []
         self.stopwords = set(nltk.corpus.stopwords.words(language))
         self.index: Dictionary = None
-        if stemming:
-            self.stemmer = nltk.PorterStemmer()
-        else:
-            self.stemmer = None
+        self.stemmer = nltk.SnowballStemmer(language) if stemming else None
         try:
-            self.load_indexed_document()
+            self.load_indexed_corpus()
         except FileNotFoundError or FileExistsError:
-            self.load_data()
-            self.create_document_index()
-            self.save_indexed_document()
+            self.parse_documents(path)
+            self.create_indexed_corpus()
+            self.vectors = self.docs2bows()
+            self.save_indexed_corpus()
         self.mapping = {doc.doc_id: i for i, doc in enumerate(self.documents)}
 
-    def parse_document(self, doc_id: str, doc_title: str, doc_text: str) -> Document:
-        """Parse the document and return a Document object"""
-        pass
-
-    def load_data(self):
-        """Load the data from the data directory"""
-        for file in os.listdir(self.data_dir):
-            with open(os.path.join(self.data_dir, file), "r") as f:
-                doc_id = file.split(".")[0]
-                doc_title = f.name
-                doc_text = f.read()
-                self.documents.append(self.parse_document(doc_id, doc_title, doc_text))
+    @abstractmethod
+    def parse_documents(self, path: Path):
+        raise NotImplementedError
 
     def preprocess_text(self, text: str) -> List[str]:
-        """Preprocess the text and returns a list of tokens"""
         text = remove_punctuation(text)
         text = to_lower(text)
         tokens = tokenize(text)
@@ -53,29 +43,32 @@ class Corpus:
     def stemming(self, tokens: List[str]) -> List[str]:
         return [self.stemmer.stem(tok) for tok in tokens]
 
-    def create_document_index(self):
-        """Create a document index"""
-        raise NotImplementedError()
+    def load_indexed_corpus(self):
+        indexed_corpus_path = Path(f'../data/indexed_corpus/{self.corpus_type}/')
+        self.index = Dictionary.load(f'{indexed_corpus_path}/index.idx')
+        self.vectors = pickle.load(open(indexed_corpus_path / 'docs_vect.pkl', 'rb'))
+        self.documents = pickle.load(open(indexed_corpus_path / 'docs.pkl', 'rb'))
 
-    def load_indexed_document(self):
-        """Load the indexed document"""
-        raise NotImplementedError()
+    def create_indexed_corpus(self):
+        docs = [d.doc_tokens for d in self.documents]
+        self.index = Dictionary(docs)
 
-    def save_indexed_document(self):
-        """Save the indexed document"""
-        raise NotImplementedError()
-
-    def get_document(self, doc_id: int) -> Document:
-        """Get the document by its id"""
-        return self.documents[self.mapping[doc_id]]
+    def save_indexed_corpus(self):
+        indexed_corpus_path = Path(f'../data/indexed_corpus/{self.corpus_type}/')
+        indexed_corpus_path.mkdir(exist_ok=True)
+        self.index.save(f'{indexed_corpus_path}/index.idx')
+        pickle.dump(self.vectors, open(indexed_corpus_path / 'docs_vect.pkl', 'wb'))
+        pickle.dump(self.documents, open(indexed_corpus_path / 'docs.pkl', 'wb'))
 
     def remove_stopwords(self, tokens: List[str]) -> List[str]:
-        """Remove the stopwords from the tokens"""
         return [token for token in tokens if token not in self.stopwords]
 
-    def filter_tokens_by_occurrence(self, tokenized_docs, no_below=5, no_above=0.5):
-        """Filter the tokens by their occurrence"""
-        raise NotImplementedError()
+    def id2doc(self, doc_id: int) -> Document:
+        return self.documents[self.mapping[doc_id]]
 
-    def build_vocabulary(self, tokenized_docs):
-        raise NotImplementedError()
+    def docs2bows(self) -> List[Dict[int, int]]:
+        """
+        Converts all the document (the list of words) into the bag-of-words representation
+        format = list of (token_id, token_count) 2-tuples.
+        """
+        return [dict(self.index.doc2bow(doc.doc_tokens)) for doc in self.documents]
