@@ -3,7 +3,7 @@ import pickle
 
 import nltk
 from abc import ABC, abstractmethod
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from gensim.corpora import Dictionary
 from pathlib import Path
 
@@ -43,8 +43,12 @@ class Corpus(ABC):
     def stemming(self, tokens: List[str]) -> List[str]:
         return [self.stemmer.stem(tok) for tok in tokens]
 
+    def get_indexed_corpus_path(self):
+        stemmed = '' if self.stemmer is None else '_stemmed'
+        return Path(f'../data/indexed_corpus/{self.corpus_type}{stemmed}/')
+
     def load_indexed_corpus(self):
-        indexed_corpus_path = Path(f'../data/indexed_corpus/{self.corpus_type}/')
+        indexed_corpus_path = self.get_indexed_corpus_path()
         self.index = Dictionary.load(f'{indexed_corpus_path}/index.idx')
         self.vectors = pickle.load(open(indexed_corpus_path / 'docs_vect.pkl', 'rb'))
         self.documents = pickle.load(open(indexed_corpus_path / 'docs.pkl', 'rb'))
@@ -54,7 +58,7 @@ class Corpus(ABC):
         self.index = Dictionary(docs)
 
     def save_indexed_corpus(self):
-        indexed_corpus_path = Path(f'../data/indexed_corpus/{self.corpus_type}/')
+        indexed_corpus_path = self.get_indexed_corpus_path()
         indexed_corpus_path.mkdir(exist_ok=True)
         self.index.save(f'{indexed_corpus_path}/index.idx')
         pickle.dump(self.vectors, open(indexed_corpus_path / 'docs_vect.pkl', 'wb'))
@@ -72,3 +76,24 @@ class Corpus(ABC):
         format = list of (token_id, token_count) 2-tuples.
         """
         return [dict(self.index.doc2bow(doc.doc_tokens)) for doc in self.documents]
+
+    def doc2bow(self, doc_id: int) -> Dict[int, int]:
+        """
+        Converts the document matching the id into the bag-of-words representation
+        format = list of (token_id, token_count) 2-tuples.
+        """
+        return self.vectors[doc_id]
+
+    def get_frequency(self, tok_id: int, doc_id: int) -> int:
+        """Gets the frequency of a token in certain document"""
+        vector = self.doc2bow(doc_id)
+        try:
+            return vector[tok_id]
+        except KeyError:
+            return 0
+
+    def get_max_frequency(self, doc_id: int) -> Tuple[str, int]:
+        """Gets the term of the max frequency in a certain document"""
+        vector = self.doc2bow(doc_id)
+        max_freq_id = max(vector.items(), key=lambda x: x[1])
+        return self.index[max_freq_id[0]], max_freq_id[1]
