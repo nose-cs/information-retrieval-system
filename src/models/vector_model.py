@@ -2,14 +2,26 @@ from typing import List, Tuple, Dict
 import math
 
 from src.models import IRModel
+from src.query import QueryProcessor
 from src.utils import tf, idf
-from src.corpus import Corpus
+from src.corpus import Corpus, Document
+
 
 class VectorModel(IRModel):
     def __init__(self, corpus: Corpus):
         super().__init__(corpus)
         # parameters in the query weights
         self.a = 0.4  # 0.5
+        stemming = self.corpus.stemmer is not None
+        language = self.corpus.language
+        self.query_processor = QueryProcessor(language=language, stemming=stemming)
+
+    def query(self, query: str) -> List[Document]:
+        """Makes a query with the loaded corpus and returns the documents sorted for relevancy"""
+        query_vect = self.query_processor(query, self.corpus.index)
+        doc_ranking = self.ranking_function(query_vect)
+        docs = self.get_similarity_docs(doc_ranking)
+        return docs
 
     def ranking_function(self, query: List[Tuple[int, int]]) -> List[Tuple[int, float]]:
         """
