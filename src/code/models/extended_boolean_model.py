@@ -108,6 +108,66 @@ class ExtendedBooleanModel(IRModel):
                 i += 1
         return weight_conj_comp, conj_comp_count, i
 
+    def ranking_function1(self, query: str) -> List[Tuple[int, float]]:
+        dnf_query = self.query_processor.query_to_dnf(query)
+        string_dfn_query = str(dnf_query)
+        ranking = []
+        for i, doc in enumerate(self.corpus.documents):
+            sim = self.get_dnf_weight1(string_dfn_query, i)
+            if sim > 0:
+                ranking.append((doc.doc_id, sim))
+        ranking.sort(key=lambda x: x[1], reverse=True)
+        return ranking
+
+    def get_dnf_weight1(self, dnf: str, doc_id: int) -> (float, int):
+        conjunctive_components = dnf.split(' | ')
+        current_is_negated = False
+        weight_dnf = 0
+
+        for cc in conjunctive_components:
+            if cc[0] == '~':
+                cc = cc[1:]
+                current_is_negated = True
+            cc_weight = self.get_cc_weight1(cc, doc_id)
+            if current_is_negated:
+                weight_dnf += 1 - cc_weight
+            else:
+                weight_dnf += cc_weight
+            current_is_negated = False
+
+        if len(conjunctive_components) == 1:
+            return weight_dnf
+
+        return math.sqrt(weight_dnf) / math.sqrt(len(conjunctive_components))
+
+    def get_cc_weight1(self, cc: str, doc_id: int) -> (float, int):
+        terms = cc.split(' & ')
+        current_is_negated = False
+        weight_conj_comp = 0
+
+        for term in terms:
+            if term[0] == '(':
+                term = term[1:]
+            if terms[-1] == ')':
+                term = term[:-1]
+            if term[0] == '~':
+                term = term[1:]
+                current_is_negated = True
+            processed_term = self.query_processor.parse(term, {})
+            assert len(processed_term) == 1
+            term_weight = self.weight_doc(processed_term[0], doc_id)
+            if current_is_negated:
+                w_doc = 1 - (1 - term_weight) ** 2
+            else:
+                w_doc = (1 - term_weight) ** 2
+            weight_conj_comp += w_doc
+            current_is_negated = False
+
+        if len(terms) == 1:
+            return 1 - weight_conj_comp
+
+        return 1 - math.sqrt(weight_conj_comp) / math.sqrt(len(terms))
+
     def weight_doc(self, token: str, dj: int) -> float:
         try:
             ti = self.corpus.token2id(token)
