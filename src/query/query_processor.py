@@ -1,4 +1,4 @@
-"""Module to implement the query processing"""
+"""Module to implement the query process"""
 import nltk
 from typing import List
 from gensim.corpora import Dictionary

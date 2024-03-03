@@ -1,5 +1,5 @@
 """Module to implement the base method of the IR model"""
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import List, Tuple
 
 from src.corpus import Corpus, Document
@@ -9,6 +9,11 @@ class IRModel(ABC):
     def __init__(self, corpus: Corpus):
         self.corpus = corpus
 
+    @abstractmethod
+    def query(self, query: str) -> List[Document]:
+        raise NotImplementedError
+
+    @abstractmethod
     def ranking_function(self, query: List[Tuple[int, int]]) -> List[Tuple[int, float]]:
         """
         Main function that returns a sorted ranking of the similarity

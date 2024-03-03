@@ -17,7 +17,6 @@ class VectorModel(IRModel):
         self.query_processor = QueryProcessor(language=language, stemming=stemming)
 
     def query(self, query: str) -> List[Document]:
-        """Makes a query with the loaded corpus and returns the documents sorted for relevancy"""
         query_vect = self.query_processor(query, self.corpus.index)
         doc_ranking = self.ranking_function(query_vect)
         docs = self.get_similarity_docs(doc_ranking)

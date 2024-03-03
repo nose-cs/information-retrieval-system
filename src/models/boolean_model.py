@@ -14,7 +14,6 @@ class BooleanModel(IRModel):
         self.query_processor = BooleanQueryProcessor(language=language, stemming=stemming)
 
     def query(self, query: str) -> List[Document]:
-        """Makes a query with the loaded corpus and returns the documents sorted for relevancy"""
         doc_ranking = self.ranking_function(query)
         docs = self.get_similarity_docs(doc_ranking)
         return docs

@@ -1,12 +1,11 @@
 from typing import Tuple, List
+from sympy import And, Not
 import math
 
 from .model import IRModel
 from src.utils import tf, idf
 from src.corpus import Corpus, Document
 from src.query import BooleanQueryProcessor
-from sympy import And, Not
-
 
 class ExtendedBooleanModel(IRModel):
     def __init__(self, corpus: Corpus):
@@ -17,7 +16,6 @@ class ExtendedBooleanModel(IRModel):
         self.a = 0.4  # 0.5
 
     def query(self, query: str) -> List[Document]:
-        """Makes a query with the loaded corpus and returns the documents sorted for relevancy"""
         doc_ranking = self.ranking_function(query)
         docs = self.get_similarity_docs(doc_ranking)
         return docs
