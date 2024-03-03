@@ -11,6 +11,8 @@ from src.code.utils import remove_punctuation, to_lower, tokenize
 from .document import Document
 
 
+# TODO save tf and idf in data for improve efficiency
+
 class Corpus(ABC):
     def __init__(self, corpus_path: Path, stemming=False, corpus_type="", language="english"):
         self.corpus_type = corpus_type

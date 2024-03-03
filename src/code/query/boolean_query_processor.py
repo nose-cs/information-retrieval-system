@@ -12,7 +12,7 @@ class BooleanQueryProcessor(QueryProcessor):
     def __init__(self, language: str = "english", stemming=False):
         super().__init__(language, stemming)
         self.operators = {'&', '|', '~', '(', ')'}
-        # todo fill this
+        # TODO fill reserved words for handle exceptions
         self.reserved_words = []  # words that raise errors when call the sympify function
 
     def query_to_dnf(self, query):

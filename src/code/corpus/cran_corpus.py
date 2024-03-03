@@ -5,7 +5,7 @@ from typing import Pattern, List
 from corpus import Corpus, Document
 
 
-# todo: Add cran documents for more specific searches and recommendations like based on author
+# TODO: Add cran documents for more specific searches and recommendations like based on author
 
 class CranCorpus(Corpus):
     """
