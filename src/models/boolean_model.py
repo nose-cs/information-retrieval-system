@@ -12,7 +12,6 @@ class BooleanModel(IRModel):
         stemming = self.corpus.stemmer is not None
         language = self.corpus.language
         self.query_processor = BooleanQueryProcessor(language=language, stemming=stemming)
-        self.a = 0.4  # 0.5
 
     def query(self, query: str) -> List[Document]:
         """Makes a query with the loaded corpus and returns the documents sorted for relevancy"""
@@ -27,7 +26,7 @@ class BooleanModel(IRModel):
         format: [doc_id, similarity]
         """
         dnf_query = self.query_processor.query_to_dnf(query)
-        tokens = self.query_processor.parse(query, self.query_processor.stopwords.union(self.query_processor.operators))
+        tokens = self.query_processor.parse(query, self.query_processor.stopwords)
         ranking = []
         for i, doc in enumerate(self.corpus.documents):
             vector: Dict = {}
