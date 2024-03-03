@@ -7,6 +7,7 @@ from src.corpus import Corpus, Document
 from src.query import BooleanQueryProcessor
 from sympy import And
 
+
 class ExtendedBooleanModel(IRModel):
     def __init__(self, corpus: Corpus):
         super().__init__(corpus)
@@ -28,40 +29,29 @@ class ExtendedBooleanModel(IRModel):
         format: [doc_id, similarity]
         """
         dnf_query = self.query_processor.query_to_dnf(query)
-        print(isinstance(dnf_query, And))
+        is_and = isinstance(dnf_query, And)
         string_dfn_query = str(dnf_query)
-        print(string_dfn_query)
         tokens_with_operators = self.query_processor.parse(string_dfn_query, {}, remove_puncts=False)
         ranking = []
         for i, doc in enumerate(self.corpus.documents):
-            sim = self.calculate_similarity(tokens_with_operators, i)
+            if is_and:
+                weight_conj_comp, conj_comp_count, _ = self.weight_conjunctive_component(tokens_with_operators, i)
+                sim = 1 - (math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count))
+            else:
+                weight_dnf, dnf_count = self.weight_disjunctive_normal_form(tokens_with_operators, i)
+                sim = math.sqrt(weight_dnf) / math.sqrt(dnf_count)
             if sim > 0:
                 ranking.append((doc.doc_id, sim))
         ranking.sort(key=lambda x: x[1], reverse=True)
         return ranking
 
-    def calculate_similarity(self, tokens: List[str], doc_id: int) -> float:
+    def weight_disjunctive_normal_form(self, tokens: List[str], doc_id: int) -> (float, int):
         is_negated = False
         weight_dfn = 0
         dnf_count = 0
         for i in range(len(tokens)):
             if tokens[i] == '(':
-                weight_conj_comp = 0
-                conj_comp_count = 0
-                while tokens[i] != ')':
-                    if tokens[i] == '&':
-                        i += 1
-                        continue
-                    if tokens[i] == '~':
-                        i += 1
-                        w_doc = self.weight_doc(tokens[i], doc_id) ** 2
-                        weight_conj_comp += w_doc
-                        conj_comp_count += 1
-                        continue
-                    w_doc = (1 - self.weight_doc(tokens[i], doc_id)) ** 2
-                    weight_conj_comp += w_doc
-                    conj_comp_count += 1
-                    i += 1
+                weight_conj_comp, conj_comp_count, i = self.weight_conjunctive_component(tokens, doc_id, i + 1)
                 if is_negated:
                     weight_dfn += math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count)
                     is_negated = False
@@ -78,8 +68,30 @@ class ExtendedBooleanModel(IRModel):
                 weight_dfn += w_doc
                 dnf_count += 1
 
-        sim = math.sqrt(weight_dfn) / math.sqrt(dnf_count)
-        return sim
+        return weight_dfn, dnf_count
+
+    def weight_conjunctive_component(self, tokens: List[str], doc_id: int, start: int = 0) -> (float, int, int):
+        i = start
+        weight_conj_comp = 0
+        conj_comp_count = 0
+        while i < len(tokens):
+            if tokens[i] == ')':
+                i += 1
+                break
+            if tokens[i] == '&':
+                i += 1
+                continue
+            if tokens[i] == '~':
+                i += 1
+                w_doc = self.weight_doc(tokens[i], doc_id) ** 2
+                weight_conj_comp += w_doc
+                conj_comp_count += 1
+            else:
+                w_doc = (1 - self.weight_doc(tokens[i], doc_id)) ** 2
+                weight_conj_comp += w_doc
+                conj_comp_count += 1
+                i += 1
+        return weight_conj_comp, conj_comp_count, start
 
     def weight_doc(self, token: str, dj: int) -> float:
         try:
