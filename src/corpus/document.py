@@ -1,5 +1,6 @@
 from typing import List
 
+
 class Document:
     def __init__(self, doc_id, doc_tokens, doc_title="") -> None:
         self.doc_id: int = doc_id

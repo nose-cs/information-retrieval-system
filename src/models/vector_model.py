@@ -1,10 +1,10 @@
-from typing import List, Tuple, Dict
 import math
+from typing import List, Tuple, Dict
 
+from src.corpus import Corpus, Document
 from src.models import IRModel
 from src.query import QueryProcessor
 from src.utils import tf, idf
-from src.corpus import Corpus, Document
 
 
 class VectorModel(IRModel):
@@ -64,4 +64,3 @@ class VectorModel(IRModel):
 
     def idf(self, ti: int) -> float:
         return idf(self.corpus, ti)
-

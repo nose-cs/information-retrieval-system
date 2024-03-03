@@ -1,9 +1,9 @@
 from typing import Tuple, List, Dict
 
-from .model import IRModel
-from src.utils import tf
 from src.corpus import Corpus, Document
 from src.query import BooleanQueryProcessor
+from src.utils import tf
+from .model import IRModel
 
 
 class BooleanModel(IRModel):

@@ -1,12 +1,12 @@
 from pathlib import Path
 
-from .document import Document
 from corpus import Corpus
+from .document import Document
 
 
 class TestCorpus(Corpus):
-    def __init__(self, path: Path, stemming=False):
-        super().__init__(path=path, corpus_type='test', language='english', stemming=stemming)
+    def __init__(self, path: Path, stemming=False, language='english'):
+        super().__init__(corpus_path=path, corpus_type='test', language=language, stemming=stemming)
 
     def parse_documents(self, path: Path):
         doc_id = 0

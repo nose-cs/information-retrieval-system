@@ -1,12 +1,13 @@
+import re
 from pathlib import Path
+from typing import Pattern, List
 
 from corpus import Corpus, Document
-from typing import Pattern, List
-import re
 
-# todo: Add cran_documents for more specific searches and recommendations
 
-class CranCorpusAnalyzer(Corpus):
+# todo: Add cran documents for more specific searches and recommendations like based on author
+
+class CranCorpus(Corpus):
     """
     The cran corpus has the following structure:
         .I [#] (id of the document)
@@ -16,9 +17,10 @@ class CranCorpusAnalyzer(Corpus):
         .W (the words of the document) (usually they occupy more than one line)
         the first line is the title
     """
-    def __init__(self, corpus_path: Path, corpus_type='cran', stemming=False, language='english'):
-        super().__init__(self, corpus_path, stemming, corpus_type, language)
-        # Regular expresion to extract the id of the document
+
+    def __init__(self, path: Path, language='english', stemming=False):
+        super().__init__(corpus_path=path, corpus_type='cran', language=language, stemming=stemming)
+        # Regex to extract the id of the document
         self.id_re: Pattern = re.compile(r'\.I (\d+)')
 
     def parse_documents(self, corpus_path):

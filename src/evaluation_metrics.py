@@ -87,6 +87,7 @@ def fallout(recovered_documents: List, relevant_documents: List, total_documents
     irrelevant = total_documents - len(relevant_documents)
     return len(ri) / irrelevant
 
+
 def r_precision(recovered_documents: List, relevant_documents: List, r: int):
     """
     Calculate the r-precision measure, which is the precision measure for the first r documents recovered by the SRI.
@@ -100,6 +101,7 @@ def r_precision(recovered_documents: List, relevant_documents: List, r: int):
       double: Value between 0 and 1.
     """
     return precision(recovered_documents[:r], relevant_documents)
+
 
 def r_recall(recovered_documents: List, relevant_documents: List, r: int):
     """
@@ -115,6 +117,7 @@ def r_recall(recovered_documents: List, relevant_documents: List, r: int):
     """
     return recall(recovered_documents[:r], relevant_documents)
 
+
 def r_f1(recovered_documents: List, relevant_documents: List, r: int):
     """
     Calculate the r-f1 measure, which is the f1 measure for the first r documents recovered by the SRI.
@@ -128,6 +131,7 @@ def r_f1(recovered_documents: List, relevant_documents: List, r: int):
       double: Value between 0 and 1.
     """
     return f1(recovered_documents[:r], relevant_documents)
+
 
 def r_fallout(recovered_documents: List, relevant_documents: List, total_documents: int, r: int):
     """

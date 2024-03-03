@@ -4,14 +4,14 @@ from corpus import TestCorpus
 from models import VectorModel, BooleanModel, ExtendedBooleanModel
 
 corpus = TestCorpus(path=Path('../data/corpus/'), stemming=True)
+
 vector_model = VectorModel(corpus)
-
-
-query_1 = "butterflies and (butterflies or not kangaroo)"
-query_2 = "beautiful it a butterfield"
-query_3 = "not butterflies"
 boolean_model = BooleanModel(corpus)
 extended_boolean_model = ExtendedBooleanModel(corpus)
+
+query_1 = "butterflies and (butterflies or not kangaroo)"
+query_2 = "beautiful it as butterfield"
+query_3 = "not butterflies"
 
 print(f'boolean: {boolean_model.query(query_3)}')
 print(f'extended boolean: {extended_boolean_model.ranking_function(query_2)}')

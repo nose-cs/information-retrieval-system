@@ -1,11 +1,13 @@
-from typing import Tuple, List
-from sympy import And, Not
 import math
+from typing import Tuple, List
 
-from .model import IRModel
-from src.utils import tf, idf
+from sympy import And, Not
+
 from src.corpus import Corpus, Document
 from src.query import BooleanQueryProcessor
+from src.utils import tf, idf
+from .model import IRModel
+
 
 class ExtendedBooleanModel(IRModel):
     def __init__(self, corpus: Corpus):

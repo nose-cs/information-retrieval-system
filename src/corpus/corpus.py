@@ -1,14 +1,14 @@
 """Corpus module to implement reading and processing of the documents."""
 import pickle
+from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import List, Dict, Tuple
 
 import nltk
-from abc import ABC, abstractmethod
-from typing import List, Dict, Tuple
 from gensim.corpora import Dictionary
-from pathlib import Path
 
-from .document import Document
 from src.utils import remove_punctuation, to_lower, tokenize
+from .document import Document
 
 
 class Corpus(ABC):

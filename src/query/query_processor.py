@@ -1,9 +1,11 @@
 """Module to implement the query process"""
-import nltk
 from typing import List
+
+import nltk
 from gensim.corpora import Dictionary
 
 from src.utils import to_lower, remove_punctuation, tokenize
+
 
 class QueryProcessor:
     def __init__(self, language: str = "english", stemming=False):
