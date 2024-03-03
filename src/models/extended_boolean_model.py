@@ -5,7 +5,7 @@ from .model import IRModel
 from src.utils import tf, idf
 from src.corpus import Corpus, Document
 from src.query import BooleanQueryProcessor
-from sympy import And
+from sympy import And, Not
 
 
 class ExtendedBooleanModel(IRModel):
@@ -30,16 +30,23 @@ class ExtendedBooleanModel(IRModel):
         """
         dnf_query = self.query_processor.query_to_dnf(query)
         is_and = isinstance(dnf_query, And)
+        is_negation = isinstance(dnf_query, Not)
         string_dfn_query = str(dnf_query)
         tokens_with_operators = self.query_processor.parse(string_dfn_query, {}, remove_puncts=False)
         ranking = []
         for i, doc in enumerate(self.corpus.documents):
             if is_and:
                 weight_conj_comp, conj_comp_count, _ = self.weight_conjunctive_component(tokens_with_operators, i)
-                sim = 1 - (math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count))
+                if is_negation:
+                    sim = (math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count))
+                else:
+                    sim = 1 - (math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count))
             else:
                 weight_dnf, dnf_count = self.weight_disjunctive_normal_form(tokens_with_operators, i)
-                sim = math.sqrt(weight_dnf) / math.sqrt(dnf_count)
+                if is_negation:
+                    sim = 1 - (math.sqrt(weight_dnf) / math.sqrt(dnf_count))
+                else:
+                    sim = math.sqrt(weight_dnf) / math.sqrt(dnf_count)
             if sim > 0:
                 ranking.append((doc.doc_id, sim))
         ranking.sort(key=lambda x: x[1], reverse=True)
