@@ -34,7 +34,6 @@ class ExtendedBooleanModel(IRModel):
         if len(docs) > 0:
             self.document_recommender.add_rating(docs[0].doc_id, 1)
 
-
         return docs
 
     def ranking_function(self, query: str) -> List[Tuple[int, float]]:
@@ -80,13 +79,13 @@ class ExtendedBooleanModel(IRModel):
                 w_doc = self.weight_doc(tokens[i], doc_id) ** 2
                 weight_dfn += w_doc
                 dnf_count += 1
-
         return weight_dfn, dnf_count
 
     def get_cc_weight(self, tokens: List[str], doc_id: int, start: int = 0) -> (float, int, int):
         i = start
         weight_conj_comp = 0
         conj_comp_count = 0
+        current_is_negated = False
         while i < len(tokens):
             if tokens[i] == ')':
                 i += 1
@@ -96,16 +95,18 @@ class ExtendedBooleanModel(IRModel):
                 continue
             if tokens[i] == '~':
                 i += 1
-                w_doc = self.weight_doc(tokens[i], doc_id) ** 2
-                weight_conj_comp += w_doc
-                conj_comp_count += 1
-                i += 1
+                current_is_negated = True
             else:
-                w_doc = (1 - self.weight_doc(tokens[i], doc_id)) ** 2
+                term_weight = self.weight_doc(tokens[i], doc_id)
+                if current_is_negated:
+                    w_doc = 1 - (1 - term_weight) ** 2
+                else:
+                    w_doc = (1 - term_weight) ** 2
                 weight_conj_comp += w_doc
                 conj_comp_count += 1
+                current_is_negated = False
                 i += 1
-        return weight_conj_comp, conj_comp_count, start
+        return weight_conj_comp, conj_comp_count, i
 
     def weight_doc(self, token: str, dj: int) -> float:
         try:
