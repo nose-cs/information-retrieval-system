@@ -12,7 +12,7 @@ from src.utils import remove_punctuation, to_lower, tokenize
 
 
 class Corpus(ABC):
-    def __init__(self, path: Path, stemming=False, corpus_type="", language="english"):
+    def __init__(self, corpus_path: Path, stemming=False, corpus_type="", language="english"):
         self.corpus_type = corpus_type
         self.language = language
         self.documents: List[Document] = []
@@ -22,7 +22,7 @@ class Corpus(ABC):
         try:
             self.load_indexed_corpus()
         except FileNotFoundError or FileExistsError:
-            self.parse_documents(path)
+            self.parse_documents(corpus_path)
             self.create_indexed_corpus()
             self.vectors = self.docs2bows()
             self.save_indexed_corpus()
