@@ -85,11 +85,21 @@ class Corpus(ABC):
         """
         return self.vectors[doc_id]
 
+    def token2id(self, token: str):
+        return self.index.token2id[token]
+
     def get_frequency(self, tok_id: int, doc_id: int) -> int:
         """Gets the frequency of a token in certain document"""
         vector = self.doc2bow(doc_id)
         try:
             return vector[tok_id]
+        except KeyError:
+            return 0
+
+    def get_token_frequency(self, token: str, doc_id: int):
+        try:
+            token_id = self.token2id(token)
+            return self.get_frequency(token_id, doc_id)
         except KeyError:
             return 0
 

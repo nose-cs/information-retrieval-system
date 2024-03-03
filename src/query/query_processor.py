@@ -3,8 +3,7 @@ import nltk
 from typing import List
 from gensim.corpora import Dictionary
 
-from utils import to_lower, remove_punctuation, tokenize
-
+from src.utils import to_lower, remove_punctuation, tokenize
 
 class QueryProcessor:
     def __init__(self, language: str = "english", stemming=False):
@@ -14,10 +13,10 @@ class QueryProcessor:
         else:
             self.stemmer = None
 
-    def parse(self, text: str):
+    def parse(self, text: str, stopwords: set):
         text = to_lower(remove_punctuation(text))
         tokens = tokenize(text)
-        tokens = [tok for tok in tokens if tok not in self.stopwords]
+        tokens = [tok for tok in tokens if tok not in stopwords]
         if self.stemmer is not None:
             tokens = self.stemming(tokens)
         return tokens
@@ -30,7 +29,7 @@ class QueryProcessor:
         Builds the vector of a query based in the index dictionary
         format: list of (token_id, token_count) 2-tuples.
         """
-        return index.doc2bow(self.parse(text))
+        return index.doc2bow(self.parse(text, self.stopwords))
 
     def __call__(self, text: str, index: Dictionary):
         return self.get_query_vector(text, index)
