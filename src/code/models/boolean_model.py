@@ -2,7 +2,6 @@ from typing import Tuple, List, Dict
 
 from src.code.corpus import Corpus, Document
 from src.code.query import BooleanQueryProcessor
-from src.code.utils import tf
 from .model import IRModel
 
 
@@ -19,11 +18,6 @@ class BooleanModel(IRModel):
         return docs
 
     def ranking_function(self, query: str) -> List[Tuple[int, float]]:
-        """
-        Main function that returns a sorted ranking of the similarity
-        between the corpus and the query.
-        format: [doc_id, similarity]
-        """
         dnf_query = self.query_processor.query_to_dnf(query)
         tokens = self.query_processor.parse(query, self.query_processor.stopwords)
         ranking = []
@@ -39,6 +33,3 @@ class BooleanModel(IRModel):
                 ranking.append((doc.doc_id, 1))
         ranking.sort(key=lambda x: x[1], reverse=True)
         return ranking
-
-    def tf(self, ti: int, dj: int) -> float:
-        return tf(self.corpus, ti, dj)

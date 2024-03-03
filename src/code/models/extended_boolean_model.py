@@ -23,11 +23,6 @@ class ExtendedBooleanModel(IRModel):
         return docs
 
     def ranking_function(self, query: str) -> List[Tuple[int, float]]:
-        """
-        Main function that returns a sorted ranking of the similarity
-        between the corpus and the query.
-        format: [doc_id, similarity]
-        """
         dnf_query = self.query_processor.query_to_dnf(query)
         is_and = isinstance(dnf_query, And)
         is_negation = isinstance(dnf_query, Not)
@@ -36,10 +31,10 @@ class ExtendedBooleanModel(IRModel):
         ranking = []
         for i, doc in enumerate(self.corpus.documents):
             if is_and:
-                weight_conj_comp, conj_comp_count, _ = self.weight_conjunctive_component(tokens_with_operators, i)
+                weight_conj_comp, conj_comp_count, _ = self.get_cc_weight(tokens_with_operators, i)
                 sim = 1 - (math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count))
             else:
-                weight_dnf, dnf_count = self.weight_disjunctive_normal_form(tokens_with_operators, i)
+                weight_dnf, dnf_count = self.get_dnf_weight(tokens_with_operators, i)
                 sim = math.sqrt(weight_dnf) / math.sqrt(dnf_count)
             if is_negation:
                 sim = 1 - sim
@@ -48,13 +43,13 @@ class ExtendedBooleanModel(IRModel):
         ranking.sort(key=lambda x: x[1], reverse=True)
         return ranking
 
-    def weight_disjunctive_normal_form(self, tokens: List[str], doc_id: int) -> (float, int):
+    def get_dnf_weight(self, tokens: List[str], doc_id: int) -> (float, int):
         is_negated = False
         weight_dfn = 0
         dnf_count = 0
         for i in range(len(tokens)):
             if tokens[i] == '(':
-                weight_conj_comp, conj_comp_count, i = self.weight_conjunctive_component(tokens, doc_id, i + 1)
+                weight_conj_comp, conj_comp_count, i = self.get_cc_weight(tokens, doc_id, i + 1)
                 if is_negated:
                     weight_dfn += math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count)
                     is_negated = False
@@ -73,7 +68,7 @@ class ExtendedBooleanModel(IRModel):
 
         return weight_dfn, dnf_count
 
-    def weight_conjunctive_component(self, tokens: List[str], doc_id: int, start: int = 0) -> (float, int, int):
+    def get_cc_weight(self, tokens: List[str], doc_id: int, start: int = 0) -> (float, int, int):
         i = start
         weight_conj_comp = 0
         conj_comp_count = 0
