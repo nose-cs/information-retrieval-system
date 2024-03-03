@@ -5,7 +5,7 @@ from .model import IRModel
 from src.utils import tf, idf
 from src.corpus import Corpus, Document
 from src.query import BooleanQueryProcessor
-
+from sympy import And
 
 class ExtendedBooleanModel(IRModel):
     def __init__(self, corpus: Corpus):
@@ -28,12 +28,15 @@ class ExtendedBooleanModel(IRModel):
         format: [doc_id, similarity]
         """
         dnf_query = self.query_processor.query_to_dnf(query)
+        print(isinstance(dnf_query, And))
         string_dfn_query = str(dnf_query)
+        print(string_dfn_query)
         tokens_with_operators = self.query_processor.parse(string_dfn_query, {}, remove_puncts=False)
         ranking = []
         for i, doc in enumerate(self.corpus.documents):
             sim = self.calculate_similarity(tokens_with_operators, i)
-            ranking.append((doc.doc_id, sim))
+            if sim > 0:
+                ranking.append((doc.doc_id, sim))
         ranking.sort(key=lambda x: x[1], reverse=True)
         return ranking
 
@@ -41,7 +44,7 @@ class ExtendedBooleanModel(IRModel):
         is_negated = False
         weight_dfn = 0
         dnf_count = 0
-        for i in range(len(tokens) - 1):
+        for i in range(len(tokens)):
             if tokens[i] == '(':
                 weight_conj_comp = 0
                 conj_comp_count = 0

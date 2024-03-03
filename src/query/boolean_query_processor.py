@@ -41,6 +41,6 @@ class BooleanQueryProcessor(QueryProcessor):
 
         for i in range(len(tokens) - 1):
             if tokens[i] not in operators and (tokens[i + 1] not in operators or tokens[i + 1] == '~'):
-                tokens.insert(i, '&')
+                tokens[i] = tokens[i] + ' &'
 
         return tokens
