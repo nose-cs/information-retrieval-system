@@ -9,7 +9,6 @@ class IRModel(ABC):
     def __init__(self, corpus: Corpus):
         self.corpus = corpus
 
-
     def ranking_function(self, query: List[Tuple[int, int]]) -> List[Tuple[int, float]]:
         """
         Main function that returns a sorted ranking of the similarity
