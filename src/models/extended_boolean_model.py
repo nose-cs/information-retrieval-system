@@ -37,16 +37,12 @@ class ExtendedBooleanModel(IRModel):
         for i, doc in enumerate(self.corpus.documents):
             if is_and:
                 weight_conj_comp, conj_comp_count, _ = self.weight_conjunctive_component(tokens_with_operators, i)
-                if is_negation:
-                    sim = (math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count))
-                else:
-                    sim = 1 - (math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count))
+                sim = 1 - (math.sqrt(weight_conj_comp) / math.sqrt(conj_comp_count))
             else:
                 weight_dnf, dnf_count = self.weight_disjunctive_normal_form(tokens_with_operators, i)
-                if is_negation:
-                    sim = 1 - (math.sqrt(weight_dnf) / math.sqrt(dnf_count))
-                else:
-                    sim = math.sqrt(weight_dnf) / math.sqrt(dnf_count)
+                sim = math.sqrt(weight_dnf) / math.sqrt(dnf_count)
+            if is_negation:
+                sim = 1 - sim
             if sim > 0:
                 ranking.append((doc.doc_id, sim))
         ranking.sort(key=lambda x: x[1], reverse=True)
@@ -93,6 +89,7 @@ class ExtendedBooleanModel(IRModel):
                 w_doc = self.weight_doc(tokens[i], doc_id) ** 2
                 weight_conj_comp += w_doc
                 conj_comp_count += 1
+                i += 1
             else:
                 w_doc = (1 - self.weight_doc(tokens[i], doc_id)) ** 2
                 weight_conj_comp += w_doc
