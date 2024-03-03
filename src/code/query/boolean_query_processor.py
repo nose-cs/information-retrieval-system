@@ -32,7 +32,7 @@ class BooleanQueryProcessor(QueryProcessor):
     def clean_query(query: str):
         query = to_lower(query)
         query = query.replace('(', ' ( ').replace(')', ' ) ')
-        query = " " + query  # for resolve when query starts with not
+        query = " " + query  # for fix the error parsing when query starts with not
         return query.replace(" not ", " ~ ").replace(" and ", " & ").replace(" or ", " | ")
 
     def tokenize_boolean_query(self, query: str):

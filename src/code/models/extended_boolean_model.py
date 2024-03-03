@@ -20,6 +20,21 @@ class ExtendedBooleanModel(IRModel):
     def query(self, query: str) -> List[Document]:
         doc_ranking = self.ranking_function(query)
         docs = self.get_similarity_docs(doc_ranking)
+
+        # Doing clustering to return related documents to the one with the highest score
+        if self.clusterer is not None:
+            try:
+                related_docs = self.clusterer.get_cluster_samples(self.corpus.mapping[docs[0].doc_id])
+                related_docs = [self.corpus.documents[doc_id] for doc_id in related_docs[:10]]
+                docs = docs[:20] + [d for d in related_docs[:5] if d not in docs[:20]]
+            except:
+                pass
+
+        # The most similar doc to the query is saved as relevant to the user for the document recommender
+        if len(docs) > 0:
+            self.document_recommender.add_rating(docs[0].doc_id, 1)
+
+
         return docs
 
     def ranking_function(self, query: str) -> List[Tuple[int, float]]:

@@ -32,7 +32,7 @@ class Corpus(ABC):
 
     @abstractmethod
     def parse_documents(self, path: Path):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def preprocess_text(self, text: str) -> List[str]:
         text = remove_punctuation(text)

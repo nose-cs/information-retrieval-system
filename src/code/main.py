@@ -3,16 +3,43 @@ from pathlib import Path
 from corpus import TestCorpus
 from models import VectorModel, BooleanModel, ExtendedBooleanModel
 
-corpus = TestCorpus(path=Path('../../data/corpus/'), stemming=True)
 
-vector_model = VectorModel(corpus)
-boolean_model = BooleanModel(corpus)
-extended_boolean_model = ExtendedBooleanModel(corpus)
+def terminal_main():
+    corpus = TestCorpus(path=Path('../../data/corpus/'), stemming=True)
+    print('Corpus Built')
 
-query_1 = "butterflies and (butterflies or not kangaroo)"
-query_2 = "beautiful it aushu butterfield"
-query_3 = "not butterflies"
+    # vector_model = VectorModel(corpus)
+    # print('Vector Model Built')
+    #
+    # boolean_model = BooleanModel(corpus)
+    # print('Boolean Model Built')
 
-print(f'boolean: {boolean_model.query(query_3)}')
-print(f'extended boolean: {extended_boolean_model.ranking_function(query_2)}')
-print(f'vector: {vector_model.query(query_2)}')
+    extended_boolean_model = ExtendedBooleanModel(corpus)
+    print('Extended Boolean Model Built\n')
+
+    query = "beautiful it aushu butterfield are great"
+
+    # print(f'boolean: {boolean_model.query(query)}')
+    # print(f'vector: {vector_model.query(query)}')
+    ranked_documents = extended_boolean_model.ranking_function(query)
+    print(f'extended boolean result:{ranked_documents} \nquery:{query}\n')
+    extended_boolean_model.user_feedback(query, [4,2], [doc for doc, rank in ranked_documents])
+    extended_boolean_model.pseudo_feedback(query, ranked_documents, 1)
+    recommended_documents = extended_boolean_model.get_recommended_documents()
+    print(f'recommended documents: {recommended_documents}')
+
+    extended_boolean_model.query(query)
+
+
+def web_main():
+    raise NotImplementedError()
+
+
+if __name__ == '__main__':
+
+    web = False
+
+    if web:
+        web_main()
+    else:
+        terminal_main()
