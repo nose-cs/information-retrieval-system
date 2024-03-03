@@ -1,20 +1,21 @@
-from corpus import Corpus
-from clustering import ClusterManager
-from typing import Dict
-from pathlib import Path
-import numpy as np
 import json
+from pathlib import Path
+from typing import Dict
+
+import numpy as np
+
+from clustering import ClusterManager
 
 
 class DocumentRecommender:
-    def __init__(self, clusterer: ClusterManager, corpus: Corpus, ratings: Dict[int, int]=None):
+    def __init__(self, clusterer: ClusterManager, corpus: "Corpus", ratings: Dict[int, int] = None):
         """
         Document Recommender initialization
         :param clusterer: corpus with the documents
         :param ratings: ratings of the documents consisting in: [doc_id, rating]
         (usually a rating of 0 or 1 if the user found the document interesting)
         """
-        self.corpus: Corpus = corpus
+        self.corpus = corpus
         self.clusterer: ClusterManager = clusterer
         self.name = self.corpus.corpus_type
         if ratings is None:
@@ -44,11 +45,11 @@ class DocumentRecommender:
         dot_product = 0
         for term, freq in vect_i.items():
             try:
-                dot_product += vect_j[term]*freq
+                dot_product += vect_j[term] * freq
             except KeyError:
                 pass
-        vect_i_l2norm = np.sqrt(sum(map(lambda x: x**2, vect_i.values())))
-        vect_j_l2norm = np.sqrt(sum(map(lambda x: x**2, vect_j.values())))
+        vect_i_l2norm = np.sqrt(sum(map(lambda x: x ** 2, vect_i.values())))
+        vect_j_l2norm = np.sqrt(sum(map(lambda x: x ** 2, vect_j.values())))
         return dot_product / (vect_i_l2norm * vect_j_l2norm)
 
     def add_rating(self, doc_id: int, rating: int):
@@ -79,7 +80,8 @@ class DocumentRecommender:
         else:
             documents = [doc_id for doc_id in range(len(self.corpus.documents))]
         rated_documents = [doc_id for doc_id in documents if doc_id in self.ratings]
-        numerator = sum(map(lambda d: self.similarity(doc_id, d)*(self.ratings[d] - self.predictor_baseline(d)), rated_documents))
+        numerator = sum(
+            map(lambda d: self.similarity(doc_id, d) * (self.ratings[d] - self.predictor_baseline(d)), rated_documents))
         denominator = sum(map(lambda d: self.similarity(doc_id, d), rated_documents))
         try:
             return self.predictor_baseline(doc_id) + numerator / denominator

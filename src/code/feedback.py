@@ -2,12 +2,11 @@
 import json
 from typing import List, Tuple, Dict
 
-from corpus import Corpus
 from query import QueryProcessor
 
 
 class RocchioAlgorithm:
-    def __init__(self, query: str, corpus: Corpus, relevant_docs: List[int], non_relevant_docs: List[int]):
+    def __init__(self, query: str, corpus: "Corpus", relevant_docs: List[int], non_relevant_docs: List[int]):
         self.corpus = corpus
         self.rel_docs = relevant_docs
         self.non_rel_docs = non_relevant_docs

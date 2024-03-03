@@ -1,15 +1,16 @@
 """Module to handle clustering of the corpus for better performance"""
-from sklearn.cluster import KMeans
-from corpus import Corpus
-from yellowbrick.cluster import KElbowVisualizer
-from utils import tf, idf
+import pickle
+
 import numpy as np
 import pandas as pd
-import pickle
+from sklearn.cluster import KMeans
+from yellowbrick.cluster import KElbowVisualizer
+
+from utils import tf, idf
 
 
 class ClusterManager:
-    def __init__(self, corpus: Corpus):
+    def __init__(self, corpus: "Corpus"):
         self.corpus = corpus
         self.name = corpus.corpus_type
         # load is used to load a saved model, used for efficiency
