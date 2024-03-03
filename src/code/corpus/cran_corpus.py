@@ -7,6 +7,7 @@ from corpus import Corpus, Document
 
 # TODO: Add cran documents for more specific searches and recommendations like based on author
 
+
 class CranCorpus(Corpus):
     """
     The cran corpus has the following structure:
@@ -36,7 +37,6 @@ class CranCorpus(Corpus):
                 if len(current_lines) > 0:
                     tokens = self.preprocess_text(" ".join(current_lines))
                     title = self.title_preprocessing(current_title)
-                    summary = " ".join(current_lines[:20] + ['...'])
                     self.documents.append(Document(current_id, tokens, title))
                 current_id = int(m.group(1))
                 current_lines = []
