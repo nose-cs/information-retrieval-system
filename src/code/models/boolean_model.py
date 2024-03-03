@@ -1,8 +1,8 @@
 from typing import Tuple, List, Dict
 
-from src.corpus import Corpus, Document
-from src.query import BooleanQueryProcessor
-from src.utils import tf
+from src.code.corpus import Corpus, Document
+from src.code.query import BooleanQueryProcessor
+from src.code.utils import tf
 from .model import IRModel
 
 

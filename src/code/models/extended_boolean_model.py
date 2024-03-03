@@ -3,9 +3,9 @@ from typing import Tuple, List
 
 from sympy import And, Not
 
-from src.corpus import Corpus, Document
-from src.query import BooleanQueryProcessor
-from src.utils import tf, idf
+from src.code.corpus import Corpus, Document
+from src.code.query import BooleanQueryProcessor
+from src.code.utils import tf, idf
 from .model import IRModel
 
 

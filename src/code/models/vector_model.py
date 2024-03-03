@@ -1,10 +1,10 @@
 import math
 from typing import List, Tuple, Dict
 
-from src.corpus import Corpus, Document
-from src.models import IRModel
-from src.query import QueryProcessor
-from src.utils import tf, idf
+from src.code.corpus import Corpus, Document
+from src.code.models import IRModel
+from src.code.query import QueryProcessor
+from src.code.utils import tf, idf
 
 
 class VectorModel(IRModel):

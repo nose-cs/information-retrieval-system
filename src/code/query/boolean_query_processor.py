@@ -1,6 +1,6 @@
 from sympy import sympify, to_dnf, SympifyError
 
-from src.utils import to_lower, tokenize
+from src.code.utils import to_lower, tokenize
 from .query_processor import QueryProcessor
 
 

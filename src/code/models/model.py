@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Tuple
 
-from src.corpus import Corpus, Document
+from src.code.corpus import Corpus, Document
 
 
 class IRModel(ABC):

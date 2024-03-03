@@ -7,7 +7,7 @@ from typing import List, Dict, Tuple
 import nltk
 from gensim.corpora import Dictionary
 
-from src.utils import remove_punctuation, to_lower, tokenize
+from src.code.utils import remove_punctuation, to_lower, tokenize
 from .document import Document
 
 
@@ -46,7 +46,7 @@ class Corpus(ABC):
 
     def get_indexed_corpus_path(self):
         stemmed = '' if self.stemmer is None else '_stemmed'
-        return Path(f'../data/indexed_corpus/{self.corpus_type}{stemmed}/')
+        return Path(f'../../data/indexed_corpus/{self.corpus_type}{stemmed}/')
 
     def load_indexed_corpus(self):
         indexed_corpus_path = self.get_indexed_corpus_path()

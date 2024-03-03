@@ -4,7 +4,7 @@ from typing import List
 import nltk
 from gensim.corpora import Dictionary
 
-from src.utils import to_lower, remove_punctuation, tokenize
+from src.code.utils import to_lower, remove_punctuation, tokenize
 
 
 class QueryProcessor:
