@@ -13,8 +13,10 @@ class QueryProcessor:
         else:
             self.stemmer = None
 
-    def parse(self, text: str, stopwords: set):
-        text = to_lower(remove_punctuation(text))
+    def parse(self, text: str, stopwords, remove_puncts=True):
+        if remove_puncts:
+            text = remove_punctuation(text)
+        text = to_lower(text)
         tokens = tokenize(text)
         tokens = [tok for tok in tokens if tok not in stopwords]
         if self.stemmer is not None:
