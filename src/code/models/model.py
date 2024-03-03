@@ -11,7 +11,7 @@ class IRModel(ABC):
 
     @abstractmethod
     def query(self, query: str) -> List[Document]:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     def ranking_function(self, query: List[Tuple[int, int]]) -> List[Tuple[int, float]]:
@@ -23,7 +23,7 @@ class IRModel(ABC):
         :param query: list of tuples (term_id, term_freq)
         :return: list of tuples (doc_id, similarity)
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def get_similarity_docs(self, ranking: List[Tuple[int, float]]) -> List[Document]:
         """
