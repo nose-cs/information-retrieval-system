@@ -1,11 +1,13 @@
 from pathlib import Path
 
-from corpus import TestCorpus
+from corpus import TestCorpus, CranCorpus
 from models import VectorModel, BooleanModel, ExtendedBooleanModel
+from src.code.utils import download_cran_corpus, get_cran_queries
 
 
 def terminal_main():
-    corpus = TestCorpus(path=Path('../../data/corpus/'), stemming=True)
+    download_cran_corpus()
+    corpus = CranCorpus(Path('../../data/corpus/cranfield'),language = 'english', stemming = True)
     print('Corpus Built')
 
     vector_model = VectorModel(corpus)
@@ -14,21 +16,20 @@ def terminal_main():
 
     extended_boolean_model = ExtendedBooleanModel(corpus)
 
-    query = "species"
+    for q in get_cran_queries():
+        query = q.text
+        print(f'query: {query}')
+        print(f'boolean result: {boolean_model.query(query)}')
+        print(f'vector result: {vector_model.query(query)}')
+        ranked_documents = extended_boolean_model.ranking_function(query)
+        print(f'extended boolean result 1:{ranked_documents}')
+        print(f'extended boolean result 2:{extended_boolean_model.ranking_function1(query)}')
+        # extended_boolean_model.user_feedback(query, [4,2], [doc for doc, rank in ranked_documents])
+        # extended_boolean_model.pseudo_feedback(query, ranked_documents, 1)
+        # recommended_documents = extended_boolean_model.get_recommended_documents()
+        # print(f'recommended documents: {recommended_documents}')
 
-    # print(f'boolean: {boolean_model.query(query)}')
-    print(f'query: {query}')
-    print(f'vector result: {vector_model.query(query)}')
-    ranked_documents = extended_boolean_model.ranking_function(query)
-    print(f'extended boolean result 1:{ranked_documents}')
-    print(f'extended boolean result 2:{extended_boolean_model.ranking_function1(query)}')
-    # extended_boolean_model.user_feedback(query, [4,2], [doc for doc, rank in ranked_documents])
-    # extended_boolean_model.pseudo_feedback(query, ranked_documents, 1)
-    # recommended_documents = extended_boolean_model.get_recommended_documents()
-    # print(f'recommended documents: {recommended_documents}')
-
-    extended_boolean_model.query(query)
-
+        extended_boolean_model.query(query)
 
 def web_main():
     raise NotImplementedError()
