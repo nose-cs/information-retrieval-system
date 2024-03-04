@@ -31,6 +31,13 @@ def idf(corpus: "Corpus", ti: int) -> float:
     return math.log2(N / ni)
 
 
+def normalized_idf(corpus: "Corpus", ti: int) -> float:
+    N = len(corpus.documents)
+    ni = corpus.index.dfs[ti]
+    max_idf = corpus.max_idf
+    return math.log2(N / ni) / max_idf if max_idf > 0 else 0
+
+
 def download_cran_corpus():
     corpus_name = 'cranfield'
     dataset = ir_datasets.load(corpus_name)

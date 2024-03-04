@@ -3,6 +3,7 @@ import pickle
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Dict, Tuple
+import math
 
 import nltk
 from gensim.corpora import Dictionary
@@ -29,6 +30,7 @@ class Corpus(ABC):
             self.vectors = self.docs2bows()
             self.save_indexed_corpus()
         self.mapping = {doc.doc_id: i for i, doc in enumerate(self.documents)}
+        self.max_idf = self._get_max_idf()
 
     @abstractmethod
     def parse_documents(self, path: Path):
@@ -110,3 +112,8 @@ class Corpus(ABC):
         vector = self.doc2bow(doc_id)
         max_freq_id = max(vector.items(), key=lambda x: x[1])
         return self.index[max_freq_id[0]], max_freq_id[1]
+
+    def _get_max_idf(self):
+        N = len(self.documents)
+        idfs = [math.log2(N / ni) if ni > 0 else 0 for ni in self.index.dfs]
+        return max(idfs)

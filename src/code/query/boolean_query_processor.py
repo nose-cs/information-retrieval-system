@@ -24,7 +24,7 @@ class BooleanQueryProcessor(QueryProcessor):
         try:
             query_expr = sympify(processed_query, evaluate=False)
             query_dnf = to_dnf(query_expr, simplify=True, force=True)
-        except TypeError or SympifyError:
+        except (TypeError, SympifyError):
             raise InvalidQueryException(f'Invalid query, due to sympify function')
         return query_dnf
 

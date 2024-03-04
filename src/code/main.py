@@ -29,8 +29,6 @@ def terminal_main():
         # recommended_documents = extended_boolean_model.get_recommended_documents()
         # print(f'recommended documents: {recommended_documents}')
 
-        extended_boolean_model.query(query)
-
 def web_main():
     raise NotImplementedError()
 
