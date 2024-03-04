@@ -26,10 +26,8 @@ def terminal_main():
         print(f'extended boolean result 2:{extended_boolean_model.ranking_function1(query)}')
         # extended_boolean_model.user_feedback(query, [4,2], [doc for doc, rank in ranked_documents])
         # extended_boolean_model.pseudo_feedback(query, ranked_documents, 1)
-        recommended_documents = extended_boolean_model.get_recommended_documents()
-        print(f'recommended documents: {recommended_documents}')
-
-        extended_boolean_model.query(query)
+        # recommended_documents = extended_boolean_model.get_recommended_documents()
+        # print(f'recommended documents: {recommended_documents}')
 
 def web_main():
     raise NotImplementedError()

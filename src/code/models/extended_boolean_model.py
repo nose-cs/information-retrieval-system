@@ -5,7 +5,7 @@ from sympy import And, Not
 
 from src.code.corpus import Corpus, Document
 from src.code.query import BooleanQueryProcessor
-from src.code.utils import tf, idf
+from src.code.utils import tf, normalized_idf
 from .model import IRModel
 
 
@@ -153,9 +153,7 @@ class ExtendedBooleanModel(IRModel):
             if term[0] == '~':
                 term = term[1:]
                 current_is_negated = True
-            processed_term = self.query_processor.parse(term, {})
-            assert len(processed_term) == 1
-            term_weight = self.weight_doc(processed_term[0], doc_id)
+            term_weight = self.weight_doc(term, doc_id)
             if current_is_negated:
                 w_doc = 1 - (1 - term_weight) ** 2
             else:
@@ -179,4 +177,4 @@ class ExtendedBooleanModel(IRModel):
         return tf(self.corpus, ti, dj)
 
     def idf(self, ti: int) -> float:
-        return idf(self.corpus, ti)
+        return normalized_idf(self.corpus, ti)
