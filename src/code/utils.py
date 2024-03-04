@@ -55,6 +55,7 @@ def download_cran_corpus():
 
     print('Corpus downloaded')
 
+
 def get_cran_queries():
     corpus_name = 'cranfield'
     dataset = ir_datasets.load(corpus_name)

@@ -1,8 +1,7 @@
 from sympy import sympify, to_dnf, SympifyError
 
-from src.code.utils import to_lower, tokenize
+from src.code.utils import to_lower, tokenize, remove_punctuation
 from .query_processor import QueryProcessor
-from src.code.utils import to_lower, remove_punctuation
 
 
 class InvalidQueryException(Exception):
@@ -17,8 +16,7 @@ class BooleanQueryProcessor(QueryProcessor):
         self.reserved_words = []  # words that raise errors when call the sympify function
 
     def query_to_dnf(self, query):
-        clear_query = remove_punctuation(query)
-        clear_query = self.clean_query(clear_query)
+        clear_query = self.clean_query(query)
         tokens = self.tokenize_boolean_query(clear_query)
         processed_query = ''.join(tokens)
         if processed_query == "":
@@ -34,6 +32,7 @@ class BooleanQueryProcessor(QueryProcessor):
     def clean_query(query: str):
         query = to_lower(query)
         query = query.replace('(', ' ( ').replace(')', ' ) ')
+        query = remove_punctuation(query)
         query = " " + query  # for fix the error parsing when query starts with not
         return query.replace(" not ", " ~ ").replace(" and ", " & ").replace(" or ", " | ")
 
