@@ -1,6 +1,6 @@
 from sympy import sympify, to_dnf, SympifyError
 
-from src.code.utils import to_lower, tokenize
+from src.code.utils import to_lower, tokenize, remove_punctuation
 from .query_processor import QueryProcessor
 
 
@@ -32,6 +32,7 @@ class BooleanQueryProcessor(QueryProcessor):
     def clean_query(query: str):
         query = to_lower(query)
         query = query.replace('(', ' ( ').replace(')', ' ) ')
+        query = remove_punctuation(query)
         query = " " + query  # for fix the error parsing when query starts with not
         return query.replace(" not ", " ~ ").replace(" and ", " & ").replace(" or ", " | ")
 
