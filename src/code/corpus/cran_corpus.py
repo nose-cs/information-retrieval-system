@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from typing import Pattern, List
+from typing import List
 
 from corpus import Corpus, Document
 
@@ -21,6 +21,10 @@ class CranCorpus(Corpus):
 
     def __init__(self, path: Path, language='english', stemming=False):
         super().__init__(corpus_path=path, corpus_type='cran', language=language, stemming=stemming)
+
+    def parse_documents(self, path: Path):
+        for file in path.glob('*.txt'):
+            self.parse_document(file)
 
     def parse_document(self, corpus_path):
         corpus_fd = open(corpus_path, 'r')

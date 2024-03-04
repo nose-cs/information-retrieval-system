@@ -30,14 +30,8 @@ class Corpus(ABC):
             self.save_indexed_corpus()
         self.mapping = {doc.doc_id: i for i, doc in enumerate(self.documents)}
 
-
-    def parse_documents(self, path: Path):
-        for file in path.glob('*.txt'):
-            self.parse_document(file)
-
-
     @abstractmethod
-    def parse_document(self, path: Path):
+    def parse_documents(self, path: Path):
         raise NotImplementedError()
 
     def preprocess_text(self, text: str) -> List[str]:
