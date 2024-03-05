@@ -16,6 +16,17 @@ class QueryProcessor:
             self.stemmer = None
 
     def parse(self, text: str, stopwords, remove_puncts=True):
+        """
+        Parse the text, removing the punctuation, transforming to lower case, tokenizing and removing the stopwords.
+
+        Args:
+        - text: the text to parse
+        - stopwords: the stopwords to remove
+        - remove_puncts: if True, remove the punctuation
+
+        Returns:
+        - list of str: the tokens of the text
+        """
         if remove_puncts:
             text = remove_punctuation(text)
         text = to_lower(text)

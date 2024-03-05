@@ -18,7 +18,6 @@ class CranCorpus(Corpus):
         .W (the words of the document) (usually they occupy more than one line)
         the first line is the title
     """
-
     def __init__(self, path: Path, language='english', stemming=False):
         super().__init__(corpus_path=path, corpus_type='cran', language=language, stemming=stemming)
 

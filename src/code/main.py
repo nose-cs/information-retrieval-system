@@ -2,7 +2,7 @@ from pathlib import Path
 
 from corpus import TestCorpus, CranCorpus
 from models import VectorModel, BooleanModel, ExtendedBooleanModel
-from src.code.utils import download_cran_corpus, get_cran_queries
+from utils import download_cran_corpus, get_cran_queries
 
 
 def terminal_main():

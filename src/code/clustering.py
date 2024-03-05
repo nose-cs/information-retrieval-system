@@ -25,6 +25,9 @@ class ClusterManager:
         """
         Creates the training examples of the clusterer creating vectors
         of the documents in the set.
+
+        Returns:
+        - np.array: the examples that will be used to train the model
         """
         examples = []
         for doc_id in range(self.corpus.index.num_docs):
@@ -32,7 +35,14 @@ class ClusterManager:
         return np.array(examples)
 
     def get_doc_vector(self, doc_id: int):
-        """Gets the vector of a single document"""
+        """Gets the vector of a single document
+
+        Args:
+        - doc_id: the id of the document
+
+        Returns:
+        - np.array: the vector of the document
+        """
         bow = self.corpus.doc2bow(doc_id)
         tf_idf_vectors = np.zeros(len(self.corpus.index))
         for term_id, freq in bow.items():
@@ -40,9 +50,13 @@ class ClusterManager:
         return tf_idf_vectors
 
     def elbow_method(self) -> int:
-        """Gets the optimus k by the elbow method"""
+        """
+        Gets the optimus k by the elbow method
+
+        Returns:
+        - int: the optimal k
+        """
         visualizer = KElbowVisualizer(self.model, k=(4, 20), metric='calinski_harabasz')
-        # visualizer = KElbowVisualizer(KMeans(), k=(4, 20))
         visualizer.fit(self.X)
         visualizer.show()
         return visualizer.elbow_value_
@@ -51,6 +65,10 @@ class ClusterManager:
         """
         Does the training of k-means.
         Also stores all the documents clusters.
+
+        Args:
+        - k: the number of clusters
+        - load: if the model should be loaded
         """
         if not load:
             self.fit_cluster(k)
