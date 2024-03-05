@@ -26,7 +26,7 @@ class ExtendedBooleanModel(IRModel):
             try:
                 related_docs = self.clusterer.get_cluster_samples(self.corpus.mapping[docs[0].doc_id])
                 related_docs = [self.corpus.documents[doc_id] for doc_id in related_docs[:10]]
-                docs = docs[:20] + [d for d in related_docs[:5] if d not in docs[:20]]
+                docs = docs[:150] + [d for d in related_docs[:5] if d not in docs[:20]]
             except:
                 pass
 

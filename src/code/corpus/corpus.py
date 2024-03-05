@@ -144,6 +144,10 @@ class Corpus(ABC):
     def get_max_frequency(self, doc_id: int) -> Tuple[str, int]:
         """Gets the term of the max frequency and its frequency in a certain document"""
         vector = self.doc2bow(doc_id)
+
+        if len(vector) == 0:
+            return '', 0
+
         max_freq_id = max(vector.items(), key=lambda x: x[1])
         return self.index[max_freq_id[0]], max_freq_id[1]
 
@@ -151,4 +155,8 @@ class Corpus(ABC):
         """Gets the maximum inverse document frequency of the corpus"""
         N = len(self.documents)
         idfs = [math.log2(N / ni) if ni > 0 else 0 for ni in self.index.dfs]
+
+        if len(idfs) == 0:
+            return 0
+
         return max(idfs)

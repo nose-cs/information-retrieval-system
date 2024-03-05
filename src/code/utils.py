@@ -25,6 +25,10 @@ def tf(corpus: "Corpus", ti: int, dj: int) -> float:
     """Returns the normalized term frequency of a term in a document"""
     freq = corpus.get_frequency(ti, dj)
     max_freq_tok, max_freq = corpus.get_max_frequency(dj)
+
+    if max_freq == 0:
+        return 0
+
     return freq / max_freq
 
 
@@ -55,7 +59,7 @@ def download_cran_corpus():
 
     documents = [doc for doc in dataset.docs_iter()]
 
-    documents = documents[:100]
+    # documents = documents[:600]
 
     for i, doc in enumerate(documents):
         with open(f'{path}/{i}.txt', 'w') as f:
@@ -72,7 +76,7 @@ def get_cran_queries():
     corpus_name = 'cranfield'
     dataset = ir_datasets.load(corpus_name)
     queries = [query for query in dataset.queries_iter()]
-    queries = queries[14:18]
+    queries = queries[:100]
     query_ids = [query.query_id for query in queries]
     qrels = [qrel for qrel in dataset.qrels_iter() if qrel.query_id in query_ids]
     return queries, qrels

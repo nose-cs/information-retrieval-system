@@ -32,9 +32,6 @@ def recall(recovered_documents: List, relevant_documents: List):
     Returns:
       double: Value between 0 and 1.
     """
-    if len(relevant_documents) == 0:
-        return 0
-
     return len(set(recovered_documents) & set(relevant_documents)) / len(relevant_documents)
 
 
@@ -53,7 +50,7 @@ def f_beta(recovered_documents: List, relevant_documents: List, beta):
     p = precision(recovered_documents, relevant_documents)
     r = recall(recovered_documents, relevant_documents)
 
-    if p == 0 and recall == 0:
+    if p == 0 and r == 0:
         return 0
 
     return (1 + beta ** 2) * p * r / (beta ** 2 * p + r)
@@ -86,6 +83,10 @@ def fallout(recovered_documents: List, relevant_documents: List, total_documents
     """
     ri = [d for d in recovered_documents if d not in relevant_documents]
     irrelevant = total_documents - len(relevant_documents)
+
+    if irrelevant == 0:
+        return 0
+
     return len(ri) / irrelevant
 
 
