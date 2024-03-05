@@ -8,11 +8,22 @@ from clustering import ClusterManager
 
 
 class DocumentRecommender:
+    """
+    Document Recommender class to recommend documents based on the ratings of the user
+
+    Attributes:
+    - corpus: the corpus with the documents
+    - clusterer: the clusterer used to cluster the documents
+    - ratings: the ratings of the documents
+    """
+
     def __init__(self, clusterer: ClusterManager, corpus: "Corpus", ratings: Dict[int, int] = None):
         """
         Document Recommender initialization
-        :param clusterer: corpus with the documents
-        :param ratings: ratings of the documents consisting in: [doc_id, rating]
+
+        Args:
+        - clusterer: corpus with the documents
+        - ratings: ratings of the documents consisting in: [doc_id, rating]
         (usually a rating of 0 or 1 if the user found the document interesting)
         """
         self.corpus = corpus
@@ -25,14 +36,33 @@ class DocumentRecommender:
 
     @property
     def mean_of_items(self):
+        """Returns the mean of the ratings"""
         return sum(self.ratings.values()) / len(self.ratings)
 
     def similarity(self, doc_i: int, doc_j: int) -> float:
-        """Returns the similarity between two documents"""
+        """
+        Returns the similarity between two documents
+
+        Args:
+        - doc_i: the id of the first document
+        - doc_j: the id of the second document
+
+        Returns:
+        - float: the similarity between the two documents
+        """
         return self.jaccard_distance(doc_i, doc_j)
 
     def jaccard_distance(self, doc_i, doc_j):
-        """Binary distance between 2 documents"""
+        """
+        Returns the Jaccard distance between two documents, that is, the intersection over the union of the documents
+
+        Args:
+        - doc_i: the id of the first document
+        - doc_j: the id of the second document
+
+        Returns:
+        - float: the Jaccard distance between the two documents
+        """
         vect_i = set(self.corpus.doc2bow(doc_i).keys())
         vect_j = set(self.corpus.doc2bow(doc_j).keys())
         intersect = len(vect_i.intersection(vect_j))
@@ -40,6 +70,16 @@ class DocumentRecommender:
         return intersect / union
 
     def cosine_distance(self, doc_i, doc_j):
+        """
+        Returns the cosine distance between two documents
+
+        Args:
+        - doc_i: the id of the first document
+        - doc_j: the id of the second document
+
+        Returns:
+        - float: the cosine distance between the two documents
+        """
         vect_i = self.corpus.doc2bow(doc_i)
         vect_j = self.corpus.doc2bow(doc_j)
         dot_product = 0
@@ -53,17 +93,36 @@ class DocumentRecommender:
         return dot_product / (vect_i_l2norm * vect_j_l2norm)
 
     def add_rating(self, doc_id: int, rating: int):
-        """Adds a rating for the doc_id in the ratings list"""
+        """
+        Adds a rating for the doc_id in the ratings list
+
+        Args:
+        - doc_id: the id of the document
+        - rating: the rating of the document
+        """
         self.ratings[doc_id] = rating
         self.save_ratings()
 
     def add_ratings(self, ratings: Dict[int, int]):
-        """Adds the rating for different documents"""
+        """
+        Adds the rating for different documents
+
+        Args:
+        - ratings: the ratings of the documents consisting in: [doc_id, rating]
+        """
         self.ratings.update(ratings)
         self.save_ratings()
 
     def doc_deviation(self, doc_id: int):
-        """Mean deviation of a document"""
+        """
+        Mean deviation of a document
+
+        Args:
+        - doc_id: the id of the document
+
+        Returns:
+        - float: the deviation of the document
+        """
         try:
             return self.ratings[doc_id] - self.mean_of_items
         except KeyError:
@@ -71,10 +130,26 @@ class DocumentRecommender:
             return -self.mean_of_items
 
     def predictor_baseline(self, doc_id: int):
+        """
+        Returns the predictor baseline of a document, that is, the mean of the ratings plus the deviation of the document
+
+        Args:
+        - doc_id: the id of the document
+
+        Returns:
+        - float: the predictor baseline of the document
+        """
         return self.mean_of_items + self.doc_deviation(doc_id)
 
     def expected_rating(self, doc_id: int):
-        """Predicts the rating of an unseen document"""
+        """Predicts the rating of an unseen document based on the ratings of the documents that are similar to it
+
+        Args:
+        - doc_id: the id of the document
+
+        Returns:
+        - float: the expected rating of the document
+        """
         if self.clusterer is not None:
             documents = self.clusterer.get_cluster_samples(doc_id)
         else:
@@ -89,7 +164,15 @@ class DocumentRecommender:
             return 0
 
     def recommend_documents(self, k=5):
-        """Searches through all the documents and returns the best `k` recommendations"""
+        """
+        Searches through all the documents and returns the best `k` recommendationsbased on the expected rating of the documents.
+
+        Args:
+        - k: the number of recommendations to return
+
+        Returns:
+        - List[int]: the list of the best `k` recommendations
+        """
         doc_ratings = {}
         for doc_id in range(len(self.corpus.documents)):
             if doc_id not in self.ratings:

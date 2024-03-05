@@ -18,6 +18,7 @@ class BooleanModel(IRModel):
         return docs
 
     def ranking_function(self, query: str) -> List[Tuple[int, float]]:
+        # transforms the query into a DNF and use the substitution method to get the ranking
         dnf_query = self.query_processor.query_to_dnf(query)
         tokens = self.query_processor.parse(query, self.query_processor.stopwords)
         ranking = []

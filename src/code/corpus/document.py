@@ -2,6 +2,14 @@ from typing import List
 
 
 class Document:
+    """
+    Represents a document in the corpus.
+
+    Attributes:
+    - doc_id: the id of the document
+    - doc_title: the title of the document
+    - doc_tokens: the tokens of the document
+    """
     def __init__(self, doc_id, doc_tokens, doc_title="") -> None:
         self.doc_id: int = doc_id
         self.doc_title: str = doc_title

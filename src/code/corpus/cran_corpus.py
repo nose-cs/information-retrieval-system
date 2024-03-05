@@ -18,7 +18,6 @@ class CranCorpus(Corpus):
         .W (the words of the document) (usually they occupy more than one line)
         the first line is the title
     """
-
     def __init__(self, path: Path, language='english', stemming=False):
         super().__init__(corpus_path=path, corpus_type='cran', language=language, stemming=stemming)
 
@@ -43,8 +42,10 @@ class CranCorpus(Corpus):
                 current_title = []
             if line.startswith('.T'):
                 getting_title = True
+                current_title.append(line[2:-1])
             elif line.startswith('.W'):
                 getting_words = True
+                current_lines.append(line[2:-1])
             elif line.startswith('.A'):
                 getting_title = False
             elif line.startswith('.X'):

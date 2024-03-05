@@ -18,7 +18,7 @@ class ExtendedBooleanModel(IRModel):
         self.a = 0.4  # 0.5
 
     def query(self, query: str) -> List[Document]:
-        doc_ranking = self.ranking_function(query)
+        doc_ranking = self.ranking_function1(query)
         docs = self.get_similarity_docs(doc_ranking)
 
         # Doing clustering to return related documents to the one with the highest score

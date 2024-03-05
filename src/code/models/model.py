@@ -15,17 +15,29 @@ class IRModel(ABC):
 
     @abstractmethod
     def query(self, query: str) -> List[Document]:
+        """
+        Main function that returns the documents that are most similar
+        to the query.
+
+        Args:
+        - query: the query of the user
+
+        Returns:
+        - list of documents
+        """
         raise NotImplementedError()
 
     @abstractmethod
     def ranking_function(self, query: List[Tuple[int, int]]) -> List[Tuple[int, float]]:
         """
-        Main function that returns a sorted ranking of the similarity
+        Returns a sorted ranking of the similarity
         between the corpus and the query.
-        format: [doc_id, similarity]
 
-        :param query: list of tuples (term_id, term_freq)
-        :return: list of tuples (doc_id, similarity)
+        Args:
+        - query: list of tuples (term_id, term_freq)
+
+        Returns:
+        - list of tuples (doc_id, similarity)
         """
         raise NotImplementedError()
 
@@ -33,16 +45,23 @@ class IRModel(ABC):
         """
         Uses the ranking produced by the ranking function
         and returns the documents with the highest ranking.
+
+        Args:
+        - ranking: list of tuples (doc_id, similarity)
+
+        Returns:
+        - list of documents
         """
         return [self.corpus.id2doc(doc_id) for doc_id, _ in ranking]
 
     def user_feedback(self, query: str, relevant_docs: List[int], total_docs: List[int]):
         """
         Feedback if the user helped
-        :param query: The initial query of the user
-        :param relevant_docs: The list of the documents id the user found relevant
-        :param total_docs: The total list of documents id that were showed to the user
-        :return: The vector of the new query
+
+        Args:
+        -query: The initial query of the user
+        -relevant_docs: The list of the documents id the user found relevant
+        -total_docs: The total list of documents id that were showed to the user
         """
         non_relevant_docs = [doc_id for doc_id in total_docs if doc_id not in relevant_docs]
 
@@ -53,6 +72,11 @@ class IRModel(ABC):
         """
         To use if the user didn't help in the feedback.
         The k-highest ranked documents are selected as relevant and the feedback starts.
+
+         Args:
+        -query: The initial query of the user
+        -ranking: The ranking of the documents
+        -k: The number of documents to be considered relevant
         """
         relevant_docs = [doc_id for doc_id, _ in ranking[:k]]
         non_relevant_docs = [doc_id for doc_id, _ in ranking[k:]]

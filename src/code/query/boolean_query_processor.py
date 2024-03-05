@@ -15,7 +15,16 @@ class BooleanQueryProcessor(QueryProcessor):
         # TODO fill reserved words for handle exceptions
         self.reserved_words = []  # words that raise errors when call the sympify function
 
-    def query_to_dnf(self, query):
+    def query_to_dnf(self, query: str):
+        """
+        First clean the query and then transforms it into a DNF expression, using sympify and to_dnf functions from sympy.
+
+        Args:
+        - query: the query of the user
+
+        Returns:
+        - sympy expression: the DNF expression
+        """
         clear_query = self.clean_query(query)
         tokens = self.tokenize_boolean_query(clear_query)
         processed_query = ''.join(tokens)
@@ -30,6 +39,9 @@ class BooleanQueryProcessor(QueryProcessor):
 
     @staticmethod
     def clean_query(query: str):
+        """
+        Clean the query, removing punctuation, and transforming the reserved words into the boolean operators.
+        """
         query = to_lower(query)
         query = query.replace('(', ' ( ').replace(')', ' ) ')
         query = remove_punctuation(query)
@@ -37,6 +49,15 @@ class BooleanQueryProcessor(QueryProcessor):
         return query.replace(" not ", " ~ ").replace(" and ", " & ").replace(" or ", " | ")
 
     def tokenize_boolean_query(self, query: str):
+        """
+        Tokenize the query, removing the reserved words and adding the & boolean operator to the tokens if needed.
+
+        Args:
+        - query: the query of the user
+
+        Returns:
+        - list of str: the tokens of the query
+        """
         text = to_lower(query)
         tokens = tokenize(text)
 

@@ -6,6 +6,7 @@ import nltk
 
 
 def remove_punctuation(string: str) -> str:
+    """Remove punctuation from a string"""
     punctuation = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~\n\t\r\x0b\x0c"
     transform = str.maketrans(punctuation, " " * len(punctuation))
     return string.translate(transform)
@@ -16,22 +17,26 @@ def to_lower(string: str):
 
 
 def tokenize(string: str):
+    """Tokenize a string, using wordpunct_tokenize from nltk"""
     return nltk.wordpunct_tokenize(string)
 
 
 def tf(corpus: "Corpus", ti: int, dj: int) -> float:
+    """Returns the normalized term frequency of a term in a document"""
     freq = corpus.get_frequency(ti, dj)
     max_freq_tok, max_freq = corpus.get_max_frequency(dj)
     return freq / max_freq
 
 
 def idf(corpus: "Corpus", ti: int) -> float:
+    """Returns the inverse document frequency of a term"""
     N = len(corpus.documents)
     ni = corpus.index.dfs[ti]
     return math.log2(N / ni)
 
 
 def normalized_idf(corpus: "Corpus", ti: int) -> float:
+    """Returns the normalized inverse document frequency of a term"""
     N = len(corpus.documents)
     ni = corpus.index.dfs[ti]
     max_idf = corpus.max_idf
@@ -67,4 +72,7 @@ def get_cran_queries():
     corpus_name = 'cranfield'
     dataset = ir_datasets.load(corpus_name)
     queries = [query for query in dataset.queries_iter()]
-    return queries[14:18]
+    queries = queries[14:18]
+    query_ids = [query.query_id for query in queries]
+    qrels = [qrel for qrel in dataset.qrels_iter() if qrel.query_id in query_ids]
+    return queries, qrels
