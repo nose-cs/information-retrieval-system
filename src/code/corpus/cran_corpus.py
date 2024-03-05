@@ -43,8 +43,10 @@ class CranCorpus(Corpus):
                 current_title = []
             if line.startswith('.T'):
                 getting_title = True
+                current_title.append(line[2:-1])
             elif line.startswith('.W'):
                 getting_words = True
+                current_lines.append(line[2:-1])
             elif line.startswith('.A'):
                 getting_title = False
             elif line.startswith('.X'):

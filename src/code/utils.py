@@ -67,4 +67,7 @@ def get_cran_queries():
     corpus_name = 'cranfield'
     dataset = ir_datasets.load(corpus_name)
     queries = [query for query in dataset.queries_iter()]
-    return queries[14:18]
+    queries = queries[14:18]
+    query_ids = [query.query_id for query in queries]
+    qrels = [qrel for qrel in dataset.qrels_iter() if qrel.query_id in query_ids]
+    return queries, qrels

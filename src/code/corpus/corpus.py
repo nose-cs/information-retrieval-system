@@ -1,9 +1,9 @@
 """Corpus module to implement reading and processing of the documents."""
+import math
 import pickle
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Dict, Tuple
-import math
 
 import nltk
 from gensim.corpora import Dictionary

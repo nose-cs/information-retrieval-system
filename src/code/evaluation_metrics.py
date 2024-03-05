@@ -2,13 +2,6 @@
 from typing import List
 
 
-def precision_score(relevant: List, recovered: List) -> float:
-    """Precision score is: which of the documents marked as relevant are really relevant"""
-    # Recovered relevant
-    rr = [d for d in recovered if d in relevant]
-    return len(rr) / len(recovered)
-
-
 def precision(recovered_documents: List, relevant_documents: List):
     """
     Calculate the accuracy measure, which is the proportion of retrieved documents that are relevant.
@@ -21,6 +14,10 @@ def precision(recovered_documents: List, relevant_documents: List):
       double: Value between 0 and 1.
     """
     rr = set(recovered_documents) & set(relevant_documents)
+
+    if len(recovered_documents) == 0:
+        return 0
+
     return len(rr) / len(recovered_documents)
 
 
@@ -35,6 +32,8 @@ def recall(recovered_documents: List, relevant_documents: List):
     Returns:
       double: Value between 0 and 1.
     """
+    if len(relevant_documents) == 0:
+        return 0
 
     return len(set(recovered_documents) & set(relevant_documents)) / len(relevant_documents)
 
@@ -51,9 +50,11 @@ def f_beta(recovered_documents: List, relevant_documents: List, beta):
     Returns:
       double: Value between 0 and 1.
     """
-    # ! Not Implemented
     p = precision(recovered_documents, relevant_documents)
     r = recall(recovered_documents, relevant_documents)
+
+    if p == 0 and recall == 0:
+        return 0
 
     return (1 + beta ** 2) * p * r / (beta ** 2 * p + r)
 
