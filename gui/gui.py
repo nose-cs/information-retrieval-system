@@ -2,7 +2,7 @@ import streamlit as st
 
 # Title
 st.title("Poogle!")
-st.markdown("<style>h1{color: blue; text-align: center;}</style>", unsafe_allow_html=True)
+st.markdown("<style>h1{color: white; text-align: center;}</style>", unsafe_allow_html=True)
 
 # Expander with instructions
 with st.expander("Instrucciones de Uso"):
