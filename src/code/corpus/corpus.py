@@ -119,7 +119,7 @@ class Corpus(ABC):
         """
         Converts the document matching the id into the bag-of-words representation
         format = list of (token_id, token_count) 2-tuples.
-"""
+        """
         return self.vectors[doc_id]
 
     def token2id(self, token: str):

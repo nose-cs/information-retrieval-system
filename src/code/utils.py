@@ -12,6 +12,11 @@ def remove_punctuation(string: str) -> str:
     transform = str.maketrans(punctuation, " " * len(punctuation))
     return string.translate(transform)
 
+def remove_punctuation_without_parenthesis(string: str) -> str:
+    """Remove punctuation from a string"""
+    punctuation = "!\"#$%&'*+,-./:;<=>?@[\\]^_`{|}~\n\t\r\x0b\x0c"
+    transform = str.maketrans(punctuation, " " * len(punctuation))
+    return string.translate(transform)
 
 def to_lower(string: str):
     return string.lower()
