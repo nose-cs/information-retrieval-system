@@ -28,7 +28,7 @@ class IRModel(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def ranking_function(self, query: List[Tuple[int, int]]) -> List[Tuple[int, float]]:
+    def ranking_function(self, query) -> List[Tuple[int, float]]:
         """
         Returns a sorted ranking of the similarity
         between the corpus and the query.

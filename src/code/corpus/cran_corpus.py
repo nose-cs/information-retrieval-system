@@ -18,6 +18,7 @@ class CranCorpus(Corpus):
         .W (the words of the document) (usually they occupy more than one line)
         the first line is the title
     """
+
     def __init__(self, path: Path, language='english', stemming=False):
         super().__init__(corpus_path=path, corpus_type='cran', language=language, stemming=stemming)
 
@@ -58,4 +59,4 @@ class CranCorpus(Corpus):
         if len(current_lines) > 0:
             tokens = self.preprocess_text(" ".join(current_lines))
             title = self.preprocess_text(" ".join(current_title))
-            self.documents.append(Document(current_id, tokens, title))
+            self.documents.append(Document(current_id, tokens, " ".join(current_title)))

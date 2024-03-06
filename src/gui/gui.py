@@ -7,7 +7,8 @@ st.markdown("<style>h1{color: white; text-align: center;}</style>", unsafe_allow
 # Expander with instructions
 with st.expander("Instrucciones de Uso"):
     st.write("¡Bienvenido a Poogle!")
-    st.write("Este es un buscador estilo Google. Para buscar, simplemente ingresa tu consulta en la barra de búsqueda y presiona el botón 'Buscar'.")
+    st.write(
+        "Este es un buscador estilo Google. Para buscar, simplemente ingresa tu consulta en la barra de búsqueda y presiona el botón 'Buscar'.")
     st.write("¡Disfruta explorando!")
 
 # Navigation Bar

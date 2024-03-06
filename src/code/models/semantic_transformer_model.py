@@ -29,7 +29,7 @@ results = [(0, i) for i in range(len(documents))]
 
 for doc_id, embeddings_sents_document in enumerate(embeddings_sents_documents):
     total_relevance = 0
-    
+
     for token in query_tokens:
         if token in tfidf_feature_names:
             token_idx = tfidf_vectorizer.vocabulary_.get(token)
@@ -40,7 +40,7 @@ for doc_id, embeddings_sents_document in enumerate(embeddings_sents_documents):
 
             relevance_weighted = relevance * tfidf
             total_relevance += relevance_weighted
-    
+
     results[doc_id] = (total_relevance, doc_id)
 
 results = sorted(results, reverse=True)

@@ -69,29 +69,6 @@ class DocumentRecommender:
         union = len(vect_i.union(vect_j))
         return intersect / union
 
-    def cosine_distance(self, doc_i, doc_j):
-        """
-        Returns the cosine distance between two documents
-
-        Args:
-        - doc_i: the id of the first document
-        - doc_j: the id of the second document
-
-        Returns:
-        - float: the cosine distance between the two documents
-        """
-        vect_i = self.corpus.doc2bow(doc_i)
-        vect_j = self.corpus.doc2bow(doc_j)
-        dot_product = 0
-        for term, freq in vect_i.items():
-            try:
-                dot_product += vect_j[term] * freq
-            except KeyError:
-                pass
-        vect_i_l2norm = np.sqrt(sum(map(lambda x: x ** 2, vect_i.values())))
-        vect_j_l2norm = np.sqrt(sum(map(lambda x: x ** 2, vect_j.values())))
-        return dot_product / (vect_i_l2norm * vect_j_l2norm)
-
     def add_rating(self, doc_id: int, rating: int):
         """
         Adds a rating for the doc_id in the ratings list
@@ -131,7 +108,7 @@ class DocumentRecommender:
 
     def predictor_baseline(self, doc_id: int):
         """
-        Returns the predictor baseline of a document, that is, the mean of the ratings plus the deviation of the document
+        Returns the predictor baseline of a document, that is the mean of the ratings plus the deviation of the document
 
         Args:
         - doc_id: the id of the document
@@ -142,7 +119,7 @@ class DocumentRecommender:
         return self.mean_of_items + self.doc_deviation(doc_id)
 
     def expected_rating(self, doc_id: int):
-        """Predicts the rating of an unseen document based on the ratings of the documents that are similar to it
+        """Predicts the rating of an unseen document based on the ratings of the documents that are similar to it.
 
         Args:
         - doc_id: the id of the document
@@ -155,17 +132,16 @@ class DocumentRecommender:
         else:
             documents = [doc_id for doc_id in range(len(self.corpus.documents))]
         rated_documents = [doc_id for doc_id in documents if doc_id in self.ratings]
-        numerator = sum(
-            map(lambda d: self.similarity(doc_id, d) * (self.ratings[d] - self.predictor_baseline(d)), rated_documents))
-        denominator = sum(map(lambda d: self.similarity(doc_id, d), rated_documents))
+        num = sum(map(lambda d: self.similarity(doc_id, d) * (self.ratings[d] + self.predictor_baseline(d)), rated_documents))
+        den = sum(map(lambda d: self.similarity(doc_id, d), rated_documents))
         try:
-            return self.predictor_baseline(doc_id) + numerator / denominator
+            return self.predictor_baseline(doc_id) + num / den
         except ZeroDivisionError:
             return 0
 
     def recommend_documents(self, k=5):
         """
-        Searches through all the documents and returns the best `k` recommendationsbased on the expected rating of the documents.
+        Searches through all the documents and returns the best `k` recommendations based on the expected rating of the documents.
 
         Args:
         - k: the number of recommendations to return
