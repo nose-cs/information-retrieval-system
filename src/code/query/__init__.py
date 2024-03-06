@@ -1,2 +1,2 @@
-from .boolean_query_processor import BooleanQueryProcessor
+from .boolean_query_processor import BooleanQueryProcessor, InvalidQueryException
 from .query_processor import QueryProcessor

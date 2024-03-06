@@ -5,41 +5,25 @@ import pandas as pd
 from corpus import CranCorpus
 from evaluation_metrics import precision, recall, f1, fallout, r_precision, r_recall
 from models import VectorModel, BooleanModel, ExtendedBooleanModel
-from utils import get_cran_queries, download_cran_corpus
+from utils import get_cran_queries, download_cran_corpus_if_not_exist, get_sorted_relevant_documents_group_by_query
 
-download_cran_corpus()
+# download the corpus if it doesn't exist and build the corpus object
+download_cran_corpus_if_not_exist()
 corpus = CranCorpus(Path('../../data/corpus/cranfield'), language='english', stemming=True)
 print('Corpus Built')
 
+# Get the models that we are going to compare
 vector_model = VectorModel(corpus)
-
 boolean_model = BooleanModel(corpus)
-
 extended_boolean_model = ExtendedBooleanModel(corpus)
+print('Models Built')
 
-doc_ids = [str(doc.doc_id) for doc in corpus.documents]
-doc_set = set(doc_ids)
-
+# Get the relevant documents for each query that we are testing
+doc_set = set([str(doc.doc_id) for doc in corpus.documents])
 queries, qrels = get_cran_queries()
+sorted_relevant_documents_dict = get_sorted_relevant_documents_group_by_query(queries, qrels, doc_set)
 
-query_ids = [q.query_id for q in queries]
-
-relevant_documents_dict = {}  # dictionary that foreach query_id stores its relevant documents
-
-for qrel in qrels:
-    if qrel.relevance < 1:
-        continue
-    if qrel.query_id not in query_ids:
-        continue
-    if qrel.doc_id not in doc_ids:
-        continue
-    if qrel.query_id in relevant_documents_dict:
-        relevant_documents_dict[qrel.query_id].append(qrel)
-    else:
-        relevant_documents_dict[qrel.query_id] = [qrel]
-
-for q_id in relevant_documents_dict:
-    relevant_documents_dict[q_id] = sorted(relevant_documents_dict.get(q_id), key=lambda x: x.relevance, reverse=True)
+# Initialize list where we are going to store our results
 
 precisions_bool = []
 recalls_bool = []
@@ -62,7 +46,7 @@ r_precisions_vector = []
 r_recalls_vector = []
 fallouts_vector = []
 
-count = 0
+count = 0 # counter for our queries
 
 for query_to_test in queries:
     query_id = query_to_test.query_id
@@ -72,7 +56,7 @@ for query_to_test in queries:
         extended_boolean_retrieved_documents = [str(doc.doc_id) for doc in
                                                 extended_boolean_model.query(query_to_test.text)]
         vector_retrieved_documents = [str(doc.doc_id) for doc in vector_model.query(query_to_test.text)]
-        relevant_documents = [qrel.doc_id for qrel in relevant_documents_dict.get(query_id)]
+        relevant_documents = [qrel.doc_id for qrel in sorted_relevant_documents_dict.get(query_id)]
         count += 1
     except:
         continue

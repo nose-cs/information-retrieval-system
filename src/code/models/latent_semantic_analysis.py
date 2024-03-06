@@ -3,7 +3,7 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
-def Query(query: str, documents, doc_ids: list[int]):
+def latent_query(query: str, documents, doc_ids: list[int]):
     vectorizer = TfidfVectorizer(stop_words='english')
     X = vectorizer.fit_transform(documents)
 
@@ -18,6 +18,6 @@ def Query(query: str, documents, doc_ids: list[int]):
 
     sorted_indices = np.argsort(similarities[0])[::-1]
 
-    sorted_documents = [(similarities[0][i], mapping.get(i)) for i in sorted_indices]
+    sorted_documents = [(similarities[0][i], mapping.get(i)) for i in sorted_indices if similarities[0][i] > 0]
 
     return sorted_documents
