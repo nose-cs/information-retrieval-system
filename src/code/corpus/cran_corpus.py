@@ -59,4 +59,4 @@ class CranCorpus(Corpus):
         if len(current_lines) > 0:
             tokens = self.preprocess_text(" ".join(current_lines))
             title = self.preprocess_text(" ".join(current_title))
-            self.documents.append(Document(current_id, tokens, title))
+            self.documents.append(Document(current_id, tokens, " ".join(current_title)))

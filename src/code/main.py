@@ -13,7 +13,8 @@ def response_query(query: str, model: IRModel):
         print(doc)
     print("Doing pseudo-feedback")
     similarity = model.ranking_function(query)
-    model.pseudo_feedback(query, similarity)
+    # save the first 5 relevant documents as rated by the user if not feedback is received
+    model.pseudo_feedback(query, similarity, 5)
     print('Getting recommended documents for you, based on your searches and likes:')
     docs = model.get_recommended_documents()
     for doc in docs:
