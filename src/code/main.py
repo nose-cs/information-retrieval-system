@@ -22,6 +22,11 @@ def response_query(query: str, model: IRModel):
             print(doc)
     print()
 
+def get_extended_boolean_model():
+    download_cran_corpus_if_not_exist()
+    corpus = CranCorpus(Path('../../data/corpus/cranfield'), language='english', stemming=True)
+    print('Corpus Built')
+    return ExtendedBooleanModel(corpus)
 
 def terminal_main():
     download_cran_corpus_if_not_exist()
