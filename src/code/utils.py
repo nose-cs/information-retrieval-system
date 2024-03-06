@@ -82,6 +82,7 @@ def get_cran_queries():
     qrels = [qrel for qrel in dataset.qrels_iter() if qrel.query_id in query_ids]
     return queries, qrels
 
+
 def get_sorted_relevant_documents_group_by_query(queries, qrels, doc_ids) -> Dict:
     """"
     For each query, find its relevant documents in qrels, if it appears is docs_id
@@ -111,6 +112,7 @@ def get_sorted_relevant_documents_group_by_query(queries, qrels, doc_ids) -> Dic
             relevant_documents_dict[qrel.query_id] = [qrel]
 
     for q_id in relevant_documents_dict:
-        relevant_documents_dict[q_id] = sorted(relevant_documents_dict.get(q_id), key=lambda x: x.relevance, reverse=True)
+        relevant_documents_dict[q_id] = sorted(relevant_documents_dict.get(q_id), key=lambda x: x.relevance,
+                                               reverse=True)
 
     return relevant_documents_dict

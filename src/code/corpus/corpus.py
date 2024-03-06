@@ -28,6 +28,7 @@ class Corpus(ABC):
     - stemmer: nltk.stem.SnowballStemmer
     - vectors: list of dictionaries that represents the bag of words of the documents
     """
+
     def __init__(self, corpus_path: Path, stemming=False, corpus_type="", language="english"):
         self.corpus_type = corpus_type
         self.language = language

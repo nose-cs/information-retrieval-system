@@ -46,7 +46,7 @@ r_precisions_vector = []
 r_recalls_vector = []
 fallouts_vector = []
 
-count = 0 # counter for our queries
+count = 0  # counter for our queries
 
 for query_to_test in queries:
     query_id = query_to_test.query_id

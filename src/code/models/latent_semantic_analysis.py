@@ -3,6 +3,7 @@ from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
+
 def latent_query(query: str, documents, doc_ids: list[int]):
     vectorizer = TfidfVectorizer(stop_words='english')
     X = vectorizer.fit_transform(documents)

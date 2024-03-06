@@ -5,6 +5,7 @@ from models import ExtendedBooleanModel, IRModel
 from utils import download_cran_corpus_if_not_exist
 from query import InvalidQueryException
 
+
 def response_query(query: str, model: IRModel):
     docs = model.query(query)
     print('First 30 results for the query:')
@@ -20,9 +21,10 @@ def response_query(query: str, model: IRModel):
             print(doc)
     print()
 
+
 def terminal_main():
     download_cran_corpus_if_not_exist()
-    corpus = CranCorpus(Path('../../data/corpus/cranfield'),language = 'english', stemming = True)
+    corpus = CranCorpus(Path('../../data/corpus/cranfield'), language='english', stemming=True)
     print('Corpus Built')
 
     extended_boolean_model = ExtendedBooleanModel(corpus)
