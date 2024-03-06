@@ -52,12 +52,12 @@ class ExtendedBooleanModel(IRModel):
         weight_dnf = 0
 
         for cc in conjunctive_components:
-            if cc[0] == '~':
-                cc = cc[1:]
+            if cc[0] == '(' and cc[1] =='~':
+                cc = cc[2:]
                 current_is_negated = True
             cc_weight = self.get_cc_weight(cc, doc_id)
             if current_is_negated:
-                weight_dnf += 1 - (cc_weight ** 2)
+                weight_dnf += 1 if cc_weight == 0 else 0
             else:
                 weight_dnf += cc_weight ** 2
             current_is_negated = False
@@ -94,7 +94,7 @@ class ExtendedBooleanModel(IRModel):
                 current_is_negated = True
             term_weight = self.weight_doc(term, doc_id)
             if current_is_negated:
-                w_doc = 1 - (1 - term_weight) ** 2
+                w_doc = 0 if term_weight == 0 else 1
             else:
                 w_doc = (1 - term_weight) ** 2
             weight_conj_comp += w_doc
